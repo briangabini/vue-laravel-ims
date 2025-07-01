@@ -16,7 +16,7 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
-const footerNavItems: NavItem[] = [
+/*const footerNavItems: NavItem[] = [
     {
         title: 'Github Repo',
         href: 'https://github.com/laravel/vue-starter-kit',
@@ -27,7 +27,7 @@ const footerNavItems: NavItem[] = [
         href: 'https://laravel.com/docs/starter-kits#vue',
         icon: BookOpen,
     },
-];
+];*/
 </script>
 
 <template>
@@ -49,7 +49,7 @@ const footerNavItems: NavItem[] = [
         </SidebarContent>
 
         <SidebarFooter>
-            <NavFooter :items="footerNavItems" />
+<!--            <NavFooter :items="footerNavItems" />-->
             <NavUser />
         </SidebarFooter>
     </Sidebar>
