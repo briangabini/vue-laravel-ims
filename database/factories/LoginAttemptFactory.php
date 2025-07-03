@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,10 @@ class LoginAttemptFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'user_id' => User::factory(),
+            'ip_address' => fake()->ipv4(),
+            'successful' => fake()->boolean(),
+            'logged_in_at' => now(),
         ];
     }
 }

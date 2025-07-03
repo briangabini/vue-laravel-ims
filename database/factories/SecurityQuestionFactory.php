@@ -17,7 +17,7 @@ class SecurityQuestionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'question_text' => fake()->unique()->sentence() . '?',
         ];
     }
 }
