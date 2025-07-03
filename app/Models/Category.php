@@ -21,6 +21,8 @@ class Category extends Model
         'slug',
     ];
 
+    public $timestamps = false;
+
     /**
      * Get the products for the category.
      */
