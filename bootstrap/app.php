@@ -46,7 +46,24 @@ return Application::configure(basePath: dirname(__DIR__))
                 'errors'   => $e->errors(),
             ];
 
-            Log::channel('warning')->warning('Validation Failed', $context);
+            Log::channel('security')->warning('Validation Failed', $context);
+
+            return false; // stop propagating the exception
+        });
+
+        $exceptions->report(function (\Illuminate\Auth\Access\AuthorizationException $e) {
+            $request = request();
+
+            $context = [
+                'url'      => $request->fullUrl(),
+                'user_id'  => $request->user()?->id,
+                'ip'       => $request->ip(),
+                'action'   => $e->getMessage(),
+                'resource' => $e->hasRessource() ? get_class($e->ressource()) : null,
+                'resource_id' => $e->hasRessource() ? $e->ressource()->id : null,
+            ];
+
+            Log::channel('security')->warning('Access Control Failure', $context);
 
             return false; // stop propagating the exception
         });
