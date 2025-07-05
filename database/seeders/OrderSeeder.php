@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -18,11 +20,30 @@ class OrderSeeder extends Seeder
             $query->where('name', 'customer');
         })->get();
 
-        echo $users;
+        $products = Product::all();
 
-        Order::factory(15)->make()->each(function ($order) use ($users) {
-            $order->user_id = $users->random()->id;
-            $order->save();
-        });
+        if ($users->isNotEmpty() && $products->isNotEmpty()) {
+
+            Order::factory(25)->make(['total_price' => 0])->each(function ($order) use ($users, $products) {
+                $order->user_id = $users->random()->id;
+                $order->save();
+
+                $totalPrice = 0;
+                $itemCount = rand(1, 5);
+
+                for ($i = 0; $i < $itemCount; $i++) {
+                    $product = $products->random();
+                    $item = OrderItem::factory()->create([
+                        'order_id' => $order->id,
+                        'product_id' => $product->id,
+                        'price_per_unit' => $product->price,
+                    ]);
+                    $totalPrice += $item->price_per_unit * $item->quantity;
+                }
+
+                $order->total_price = $totalPrice;
+                $order->save();
+            });
+        }
     }
 }
