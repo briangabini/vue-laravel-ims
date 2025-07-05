@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 return Application::configure(basePath: dirname(__DIR__))
+    ->withProviders([
+        App\Providers\EventServiceProvider::class,
+    ])
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
@@ -68,15 +71,5 @@ return Application::configure(basePath: dirname(__DIR__))
             return false; // stop propagating the exception
         });
     })
-    ->withEvents(function ($events) {
-        $events->listen(
-            \App\Events\UserLoggedIn::class,
-            \App\Listeners\LogSuccessfulLogin::class
-        );
-
-        $events->listen(
-            \App\Events\UserLoginFailed::class,
-            \App\Listeners\LogFailedLogin::class
-        );
-    })
+    
     ->create();
