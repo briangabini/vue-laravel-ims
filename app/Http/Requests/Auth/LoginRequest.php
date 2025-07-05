@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Events\UserLoggedIn;
+use App\Events\UserLoginFailed;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -45,21 +47,14 @@ class LoginRequest extends FormRequest
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
-            Log::warning('Authentication Failed', [
-                'email' => $this->input('email'),
-                'ip_address' => $this->ip(),
-            ]);
+            UserLoginFailed::dispatch($this->input('email'), $this->ip());
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
         }
 
-        Log::info('Authentication Successful', [
-            'email' => $this->input('email'),
-            'ip_address' => $this->ip(),
-            'user_id' => Auth::id(),
-        ]);
+        UserLoggedIn::dispatch(Auth::user(), $this->ip());
 
         RateLimiter::clear($this->throttleKey());
     }

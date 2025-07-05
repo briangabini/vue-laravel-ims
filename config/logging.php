@@ -101,32 +101,15 @@ return [
         ],
 
         'emergency' => [
-            'driver'     => 'single',
-            'path'       => storage_path('logs/emergency.log'),
-            'level'      => 'emergency',
-            'replace_placeholders' => true,
+            'path' => storage_path('logs/laravel.log'),
         ],
 
-        // You can leave your other channels (daily, slack, etc.) below if needed…
-
-        'daily' => [
-            'driver'     => 'daily',
-            'path'       => storage_path('logs/laravel.log'),
-            'level'      => env('LOG_LEVEL', 'debug'),
-            'days'       => env('LOG_DAILY_DAYS', 14),
-            'replace_placeholders' => true,
+        'security' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/security.log'),
+            'level' => env('LOG_LEVEL', 'info'),
         ],
 
-        'slack' => [
-            'driver'   => 'slack',
-            'url'      => env('LOG_SLACK_WEBHOOK_URL'),
-            'username' => env('LOG_SLACK_USERNAME', 'Laravel Log'),
-            'emoji'    => env('LOG_SLACK_EMOJI', ':boom:'),
-            'level'    => env('LOG_LEVEL', 'critical'),
-            'replace_placeholders' => true,
-        ],
-
-        // …and so on for syslog, papertrail, null, etc.
     ],
 
 ];

@@ -50,4 +50,16 @@ return Application::configure(basePath: dirname(__DIR__))
 
             return false; // stop propagating the exception
         });
-    })->create();
+    })
+    ->withEvents(function ($events) {
+        $events->listen(
+            \App\Events\UserLoggedIn::class,
+            \App\Listeners\LogSuccessfulLogin::class
+        );
+
+        $events->listen(
+            \App\Events\UserLoginFailed::class,
+            \App\Listeners\LogFailedLogin::class
+        );
+    })
+    ->create();
