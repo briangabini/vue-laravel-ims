@@ -54,7 +54,8 @@ return [
 
         'stack' => [
             'driver' => 'stack',
-            'channels' => explode(',', env('LOG_STACK', 'single')),
+//            'channels' => explode(',', env('LOG_STACK', 'single')),
+            'channels' => ['single', 'error', 'success', 'info', 'testing'],
             'ignore_exceptions' => false,
         ],
 
@@ -121,6 +122,24 @@ return [
         'null' => [
             'driver' => 'monolog',
             'handler' => NullHandler::class,
+        ],
+
+        'testing' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/testing.log'),
+            'level' => 'debug',
+        ],
+
+        'success' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/success.log'),
+            'level' => 'info',
+        ],
+
+        'error' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/error.log'),
+            'level' => 'error',
         ],
 
         'emergency' => [
