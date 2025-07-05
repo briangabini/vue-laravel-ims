@@ -19,9 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
 //        enable only during development
-//        $middleware->validateCsrfTokens(
-//            except: ['**/*']
-//        );
+        $middleware->validateCsrfTokens(
+            except: ['**/*']
+        );
 
         $middleware->web(append: [
             HandleAppearance::class,
@@ -30,13 +30,24 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
+
+        // report ignored exceptions
+        $exceptions->stopIgnoring([
+            ValidationException::class,
+        ]);
+
         $exceptions->report(function (ValidationException $e) {
             $request = request();
-            Log::channel('error')->error("Validation Failed", [
-                "url" => $request->fullUrl(),
-                "user_id" => $request->user()?->id,
-                "ip" => $request->ip(),
-                "errors" => $e->errors(),
-            ]);
+
+            $context = [
+                'url'      => $request->fullUrl(),
+                'user_id'  => $request->user()?->id,
+                'ip'       => $request->ip(),
+                'errors'   => $e->errors(),
+            ];
+
+            Log::channel('warning')->warning('Validation Failed', $context);
+
+            return false; // stop propagating the exception
         });
     })->create();
