@@ -18,6 +18,8 @@ class OrderSeeder extends Seeder
             $query->where('name', 'customer');
         })->get();
 
+        echo $users;
+
         Order::factory(15)->make()->each(function ($order) use ($users) {
             $order->user_id = $users->random()->id;
             $order->save();

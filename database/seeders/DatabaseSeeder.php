@@ -42,6 +42,10 @@ class DatabaseSeeder extends Seeder
             'role_id' => $customerRole->id,
         ]);
 
+        User::factory(15)->create([
+            'role_id' => $customerRole->id,
+        ]);
+
         // Create 10 random customers
         $this->call([
             ProductSeeder::class,
