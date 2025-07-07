@@ -19,17 +19,36 @@ class UserSecurityAnswer extends Model
     protected $fillable = [
         'user_id',
         'security_question_id',
-        'answer_hash',
+        'answer',
     ];
+
+    /**
+     * Set the user's answer.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setAnswerAttribute(string $value): void
+    {
+        $this->attributes['answer_hash'] = bcrypt($value);
+    }
 
     /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
      */
-    protected $hidden = [
-        'answer_hash',
-    ];
+    protected $hidden = [];
+
+    /**
+     * Get the user's answer.
+     *
+     * @return string
+     */
+    public function getAnswerAttribute(): string
+    {
+        return ''; // We don't return the actual answer for security reasons
+    }
 
     /**
      * Get the user that owns the security answer.

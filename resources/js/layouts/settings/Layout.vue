@@ -18,6 +18,10 @@ const sidebarNavItems: NavItem[] = [
         title: 'Appearance',
         href: '/settings/appearance',
     },
+    {
+        title: 'Security Questions',
+        href: '/settings/security-questions',
+    },
 ];
 
 const page = usePage();

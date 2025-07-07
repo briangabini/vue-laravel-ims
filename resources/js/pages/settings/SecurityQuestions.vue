@@ -1,0 +1,116 @@
+<script setup lang="ts">
+import { useForm } from '@inertiajs/vue3';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+// import { useToast } from '@/components/ui/toast/use-toast';
+import { computed } from 'vue';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { PlusCircle, Trash2 } from 'lucide-vue-next';
+
+const props = defineProps({
+    allSecurityQuestions: Array,
+    userSecurityAnswers: Array,
+});
+
+// const { toast } = useToast();
+
+const form = useForm({
+    selectedQuestions: (props.userSecurityAnswers || []).length > 0
+        ? (props.userSecurityAnswers || []).map(q => ({ security_question_id: q.security_question_id, answer: q.answer || '' }))
+        : [{ security_question_id: '', answer: '' }],
+});
+
+const availableQuestions = computed(() => {
+    const selectedIds = new Set(form.selectedQuestions.map(q => q.security_question_id));
+    return props.allSecurityQuestions.filter(q => !selectedIds.has(q.id) || form.selectedQuestions.some(sq => sq.security_question_id === q.id));
+});
+
+const addQuestion = () => {
+    form.selectedQuestions.push({ security_question_id: '', answer: '' });
+};
+
+const removeQuestion = (index: number) => {
+    form.selectedQuestions.splice(index, 1);
+};
+
+const submit = () => {
+    form.patch(route('security-questions.update'), {
+        onSuccess: () => {
+            /*toast({
+                title: 'Success',
+                description: 'Security questions updated successfully.',
+            });*/
+        },
+        onError: (errors) => {
+            let errorMessage = 'There was an error updating your security questions.';
+            if (Object.keys(errors).length > 0) {
+                errorMessage = Object.values(errors).join(' ');
+            }
+            // toast error removed
+        },
+    });
+};
+</script>
+
+<template>
+    <Card>
+        <CardHeader>
+            <CardTitle>Security Questions</CardTitle>
+            <CardDescription>Choose security questions and provide your answers.</CardDescription>
+        </CardHeader>
+        <CardContent>
+            <form @submit.prevent="submit">
+                <div class="space-y-4">
+                    <div v-for="(selectedQ, index) in form.selectedQuestions" :key="index" class="flex items-end gap-4">
+                        <div class="flex-1 space-y-2">
+                            <Label :for="`question-${index}`">Security Question {{ index + 1 }}</Label>
+                            <Select v-model="selectedQ.security_question_id">
+                                <SelectTrigger :id="`question-${index}`">
+                                    <SelectValue placeholder="Select a question" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem v-for="q in availableQuestions" :key="q.id" :value="q.id">
+                                        {{ q.question }}
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <div v-if="form.errors[`selectedQuestions.${index}.security_question_id`]" class="text-red-500 text-sm mt-1">
+                                {{ form.errors[`selectedQuestions.${index}.security_question_id`] }}
+                            </div>
+                        </div>
+                        <div class="flex-1 space-y-2">
+                            <Label :for="`answer-${index}`">Answer</Label>
+                            <Input
+                                :id="`answer-${index}`"
+                                type="text"
+                                v-model="selectedQ.answer"
+                                class="w-full"
+                                required
+                            />
+                            <div v-if="form.errors[`selectedQuestions.${index}.answer`]" class="text-red-500 text-sm mt-1">
+                                {{ form.errors[`selectedQuestions.${index}.answer`] }}
+                            </div>
+                        </div>
+                        <Button v-if="form.selectedQuestions.length > 1" type="button" variant="destructive" @click="removeQuestion(index)">
+                            <Trash2 class="h-4 w-4" />
+                        </Button>
+                    </div>
+                </div>
+                <Button type="button" variant="outline" @click="addQuestion" class="mt-4">
+                    <PlusCircle class="mr-2 h-4 w-4" /> Add Another Question
+                </Button>
+                <Button type="submit" :disabled="form.processing" class="mt-6 block">
+                    Save
+                </Button>
+            </form>
+        </CardContent>
+    </Card>
+</template>
