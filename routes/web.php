@@ -4,8 +4,10 @@ use App\Http\Controllers\Admin\OrderController as CustomerOrderController;
 use App\Http\Controllers\Admin\ProductController as PublicProductController;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\HomeController;
+
 // Public customer-facing routes
-Route::get('/', [PublicProductController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/products/{product}', [PublicProductController::class, 'show'])->name('products.show');
 
 // Authenticated user routes

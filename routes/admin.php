@@ -10,7 +10,7 @@ use Inertia\Inertia;
 
 // Admin Dashboard
 Route::get('dashboard', function () {
-    return Inertia::render('Dashboard');
+    return Inertia::render('admin/Dashboard');
 })->name('dashboard')->middleware('role:admin,manager');
 
 // Routes accessible by BOTH 'admin' and 'manager'
