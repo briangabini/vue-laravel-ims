@@ -2,14 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Product;
+use App\Models\Category;
 use App\Models\User;
 
-class ProductPolicy
+class CategoryPolicy
 {
-    /**
-     * Grant all abilities to administrators.
-     */
     public function before(User $user, string $ability): bool|null
     {
         if ($user->role->name === 'admin') {
@@ -23,7 +20,7 @@ class ProductPolicy
         return in_array($user->role->name, ['admin', 'manager']);
     }
 
-    public function view(User $user, Product $product): bool
+    public function view(User $user, Category $category): bool
     {
         return in_array($user->role->name, ['admin', 'manager']);
     }
@@ -33,12 +30,12 @@ class ProductPolicy
         return in_array($user->role->name, ['admin', 'manager']);
     }
 
-    public function update(User $user, Product $product): bool
+    public function update(User $user, Category $category): bool
     {
         return in_array($user->role->name, ['admin', 'manager']);
     }
 
-    public function delete(User $user, Product $product): bool
+    public function delete(User $user, Category $category): bool
     {
         return $user->role->name === 'admin';
     }
