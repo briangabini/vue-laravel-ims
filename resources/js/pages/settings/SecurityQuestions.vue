@@ -26,8 +26,6 @@ const props = defineProps({
 
 console.log('All Security Questions:', props.allSecurityQuestions);
 
-// const { toast } = useToast();
-
 const form = useForm({
     selectedQuestions: (props.userSecurityAnswers || []).length > 0
         ? (props.userSecurityAnswers || []).map(q => ({ security_question_id: q.security_question_id, answer: q.answer || '' }))

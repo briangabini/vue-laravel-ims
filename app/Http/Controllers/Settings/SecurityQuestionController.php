@@ -44,6 +44,9 @@ class SecurityQuestionController extends Controller
             'selectedQuestions' => 'array',
             'selectedQuestions.*.security_question_id' => 'required|exists:security_questions,id',
             'selectedQuestions.*.answer' => 'required|string|max:255',
+        ], [
+            'selectedQuestions.*.security_question_id.required' => 'Please select a security question.',
+            'selectedQuestions.*.answer.required' => 'Please provide an answer for the selected security question.',
         ]);
 
         // Delete existing answers not in the new selection
