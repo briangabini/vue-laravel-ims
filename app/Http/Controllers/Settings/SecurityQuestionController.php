@@ -16,6 +16,7 @@ class SecurityQuestionController extends Controller
     {
         $user = Auth::user()->load('userSecurityAnswers');
         $allSecurityQuestions = SecurityQuestion::all();
+        \Log::info('All Security Questions from DB:', ['questions' => $allSecurityQuestions->toArray()]);
         $userSecurityAnswers = collect($user->userSecurityAnswers)->map(function ($answer) {
             return [
                 'security_question_id' => $answer->security_question_id,
@@ -47,7 +48,7 @@ class SecurityQuestionController extends Controller
 
         // Delete existing answers not in the new selection
         $selectedQuestionIds = collect($selectedQuestions)->pluck('security_question_id')->toArray();
-        $user->securityAnswers()->whereNotIn('security_question_id', $selectedQuestionIds)->delete();
+        $user->userSecurityAnswers()->whereNotIn('security_question_id', $selectedQuestionIds)->delete();
 
         foreach ($selectedQuestions as $q) {
             UserSecurityAnswer::updateOrCreate(
