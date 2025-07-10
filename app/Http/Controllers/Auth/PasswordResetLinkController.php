@@ -28,6 +28,7 @@ class PasswordResetLinkController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        \Log::info('Password reset link store method reached.');
         $request->validate([
             'email' => 'required|email',
         ]);

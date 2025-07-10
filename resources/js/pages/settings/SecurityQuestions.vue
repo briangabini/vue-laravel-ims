@@ -119,7 +119,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
                                             {{ form.errors[`selectedQuestions.${index}.answer`] }}
                                         </div>
                                     </div>
-                                    <Button v-if="form.selectedQuestions.length > 1" type="button" variant="destructive" @click="removeQuestion(index)" class="flex-shrink-0">
+                                    <Button v-if="form.selectedQuestions.length > 1" type="button" variant="destructive" @click="removeQuestion(index)">
                                         <Trash2 class="h-4 w-4" />
                                     </Button>
                                 </div>
