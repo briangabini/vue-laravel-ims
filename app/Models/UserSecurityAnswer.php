@@ -34,6 +34,17 @@ class UserSecurityAnswer extends Model
     }
 
     /**
+     * Verify the user's answer.
+     *
+     * @param  string  $value
+     * @return bool
+     */
+    public function verifyAnswer(string $value): bool
+    {
+        return password_verify($value, $this->attributes['answer_hash']);
+    }
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>

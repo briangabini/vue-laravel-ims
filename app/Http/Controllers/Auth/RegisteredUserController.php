@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\SecurityQuestion;
 use App\Models\User;
+use App\Models\UserSecurityAnswer;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,7 +23,9 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('auth/Register');
+        return Inertia::render('auth/Register', [
+            'securityQuestions' => SecurityQuestion::all(),
+        ]);
     }
 
     /**
@@ -31,14 +35,13 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        /*throw ValidationException::withMessages([
-            'test' => "This is a test error message.",
-        ]);*/
-
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'security_questions' => 'required|array|min:1',
+            'security_questions.*.security_question_id' => 'required|exists:security_questions,id',
+            'security_questions.*.answer' => 'required|string|max:255',
         ]);
 
         $user = User::create([
@@ -46,6 +49,14 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        foreach ($request->security_questions as $question) {
+            UserSecurityAnswer::create([
+                'user_id' => $user->id,
+                'security_question_id' => $question['security_question_id'],
+                'answer' => $question['answer'],
+            ]);
+        }
 
         event(new Registered($user));
 
