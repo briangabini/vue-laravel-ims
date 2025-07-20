@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\SecurityQuestion;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -10,39 +11,14 @@ use Inertia\Inertia;
 
 class SecurityQuestionPasswordResetController extends Controller
 {
-    public function showEmailForm()
+    public function showLinkRequestForm()
     {
-        return Inertia::render('auth/ForgotPasswordSecurity');
-    }
-
-    public function showQuestions(Request $request)
-    {
-        $request->validate(['email' => 'required|email']);
-
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user) {
-            return back()->withErrors(['email' => 'No user found with this email address.']);
-        }
-
-        $securityQuestions = $user->userSecurityAnswers()->with('securityQuestion')->get();
-
-        if ($securityQuestions->isEmpty()) {
-            return back()->withErrors(['email' => 'This user has no security questions set up.']);
-        }
-
-        return Inertia::render('auth/VerifySecurityQuestion', [
-            'email' => $user->email,
-            'securityQuestions' => $securityQuestions->map(function ($answer) {
-                return [
-                    'id' => $answer->security_question_id,
-                    'question_text' => $answer->securityQuestion->question_text,
-                ];
-            }),
+        return Inertia::render('auth/ForgotPasswordSecurity', [
+            'securityQuestions' => SecurityQuestion::all(),
         ]);
     }
 
-    public function verifyAnswer(Request $request)
+    public function sendResetLink(Request $request)
     {
         $request->validate([
             'email' => 'required|email',
@@ -53,7 +29,7 @@ class SecurityQuestionPasswordResetController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
-            return back()->withErrors(['email' => 'No user found with this email address.']);
+            return back()->withErrors(['email' => __('Invalid credentials.')]);
         }
 
         $userAnswer = $user->userSecurityAnswers()
@@ -61,7 +37,7 @@ class SecurityQuestionPasswordResetController extends Controller
             ->first();
 
         if (!$userAnswer || !$userAnswer->verifyAnswer($request->answer)) {
-            return back()->withErrors(['answer' => 'The answer to the security question is incorrect.']);
+            return back()->withErrors(['email' => __('Invalid credentials.')]);
         }
 
         $token = Password::createToken($user);
