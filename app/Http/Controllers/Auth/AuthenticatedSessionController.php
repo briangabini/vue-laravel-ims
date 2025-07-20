@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Events\UserLoggedIn;
+use App\Events\UserLoginFailed;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
@@ -29,17 +31,24 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        try {
+            $request->authenticate();
 
-        $request->session()->regenerate();
+            $request->session()->regenerate();
 
-        $user = $request->user();
+            $user = $request->user();
 
-        if ($user && in_array($user->role->name, ['admin', 'manager'])) {
-            return redirect()->intended(route('admin.dashboard', absolute: false));
+            event(new UserLoggedIn($user, $request->ip()));
+
+            if ($user && in_array($user->role->name, ['admin', 'manager'])) {
+                return redirect()->intended(route('admin.dashboard', absolute: false));
+            }
+
+            return redirect()->intended(route('home', absolute: false));
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            event(new UserLoginFailed($request->email, $request->ip()));
+            throw $e;
         }
-
-        return redirect()->intended(route('home', absolute: false));
     }
 
     /**
