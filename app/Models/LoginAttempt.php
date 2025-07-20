@@ -11,12 +11,7 @@ class LoginAttempt extends Model
     /** @use HasFactory<\Database\Factories\LoginAttemptFactory> */
     use HasFactory;
 
-    /**
-     * The name of the "updated at" column.
-     *
-     * @var string|null
-     */
-    const UPDATED_AT = null;
+    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.
@@ -28,6 +23,15 @@ class LoginAttempt extends Model
         'ip_address',
         'successful',
         'logged_in_at',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'logged_in_at' => 'datetime',
     ];
 
     /**
