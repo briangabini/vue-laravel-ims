@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\PasswordHistory;
 use App\Models\SecurityQuestion;
 use App\Models\User;
 use App\Models\UserSecurityAnswer;
@@ -48,6 +49,11 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+        ]);
+
+        PasswordHistory::create([
+            'user_id' => $user->id,
+            'password_hash' => $user->password,
         ]);
 
         foreach ($request->security_questions as $question) {
