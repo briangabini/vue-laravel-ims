@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
-use App\Events\UserLoggedIn;
-use App\Events\UserLoginFailed;
 use App\Listeners\LogFailedLogin;
 use App\Listeners\LogSuccessfulLogin;
+use Illuminate\Auth\Events\Failed;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -16,10 +16,10 @@ class EventServiceProvider extends ServiceProvider
      * @var array<class-string, array<int, class-string>>
      */
     protected $listen = [
-        UserLoggedIn::class => [
+        Login::class => [
             LogSuccessfulLogin::class,
         ],
-        UserLoginFailed::class => [
+        Failed::class => [
             LogFailedLogin::class,
         ],
     ];

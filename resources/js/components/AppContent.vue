@@ -15,7 +15,7 @@ const className = computed(() => props.class);
 const page = usePage();
 
 onMounted(() => {
-    /*if (page.props.flash?.last_login_attempt) {
+    if (page.props.flash?.last_login_attempt) {
         const { successful, ip_address, logged_in_at } = page.props.flash.last_login_attempt;
         const title = successful ? 'Successful Login' : 'Failed Login Attempt';
         const description = successful
@@ -25,11 +25,7 @@ onMounted(() => {
         toast(title, {
             description: description,
         });
-    }*/
-    toast('Welcome back!', {
-        description: 'You have successfully logged in.',
-        duration: 5000,
-    });
+    }
 });
 </script>
 

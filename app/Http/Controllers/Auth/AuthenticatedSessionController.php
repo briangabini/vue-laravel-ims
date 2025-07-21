@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Events\UserLoggedIn;
-use App\Events\UserLoginFailed;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
@@ -38,7 +37,18 @@ class AuthenticatedSessionController extends Controller
 
             $user = $request->user();
 
-            event(new UserLoggedIn($user, $request->ip()));
+            
+
+            // Now, retrieve the *previous* login attempt (which is now the second latest)
+            $lastLogin = $user->loginAttempts()->latest()->skip(1)->first();
+
+            if ($lastLogin) {
+                $request->session()->flash('last_login_attempt', [
+                    'successful' => $lastLogin->successful,
+                    'ip_address' => $lastLogin->ip_address,
+                    'logged_in_at' => $lastLogin->logged_in_at->toDayDateTimeString(),
+                ]);
+            }
 
             if ($user && in_array($user->role->name, ['admin', 'manager'])) {
                 return redirect()->intended(route('admin.dashboard', absolute: false));
@@ -46,7 +56,6 @@ class AuthenticatedSessionController extends Controller
 
             return redirect()->intended(route('home', absolute: false));
         } catch (\Illuminate\Validation\ValidationException $e) {
-            event(new UserLoginFailed($request->email, $request->ip()));
             throw $e;
         }
     }
