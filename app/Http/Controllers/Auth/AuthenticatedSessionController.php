@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -30,17 +32,19 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        $user = User::where('email', $request->email)->first();
+        $lastLogin = null;
+
+        if ($user) {
+            $lastLogin = $user->loginAttempts()->latest()->first();
+        }
+
         try {
             $request->authenticate();
 
             $request->session()->regenerate();
 
-            $user = $request->user();
-
-            
-
-            // Now, retrieve the *previous* login attempt (which is now the second latest)
-            $lastLogin = $user->loginAttempts()->latest()->skip(1)->first();
+            $authenticatedUser = $request->user();
 
             if ($lastLogin) {
                 $request->session()->flash('last_login_attempt', [
@@ -55,7 +59,7 @@ class AuthenticatedSessionController extends Controller
             }
 
             return redirect()->intended(route('home', absolute: false));
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             throw $e;
         }
     }
