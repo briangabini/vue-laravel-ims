@@ -29,6 +29,7 @@ class LogFailedLogin
     {
         $user = User::where('email', $event->credentials['email'])->first();
 
+        // Check if a similar failed login attempt has already been logged very recently
         $existingAttempt = LoginAttempt::where('user_id', $user ? $user->id : null)
             ->where('ip_address', request()->ip())
             ->where('successful', false)
@@ -36,7 +37,6 @@ class LogFailedLogin
             ->first();
 
         if ($existingAttempt) {
-            Log::debug('Duplicate failed login attempt detected and ignored.');
             return;
         }
 

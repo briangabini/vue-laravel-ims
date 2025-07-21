@@ -26,7 +26,7 @@ class LogSuccessfulLogin
      */
     public function handle(Login $event)
     {
-        Log::debug('Attempting to create LoginAttempt record.');
+        // Check if a similar login attempt has already been logged very recently
         $existingAttempt = LoginAttempt::where('user_id', $event->user->id)
             ->where('ip_address', request()->ip())
             ->where('successful', true)
@@ -34,7 +34,6 @@ class LogSuccessfulLogin
             ->first();
 
         if ($existingAttempt) {
-            Log::debug('Duplicate successful login attempt detected and ignored.');
             return;
         }
 
