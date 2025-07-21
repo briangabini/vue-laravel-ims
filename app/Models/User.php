@@ -67,7 +67,7 @@ class User extends Authenticatable
 
     public function loginAttempts(): HasMany
     {
-        return $this->hasMany(LoginAttempt::class);
+        return $this->hasMany(LoginAttempt::class)->orderByDesc('logged_in_at');
     }
 
     public function orders(): HasMany
