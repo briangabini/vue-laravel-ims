@@ -35,13 +35,14 @@ const mainNavItems = computed(() => {
                 href: route('admin.orders.index'),
                 icon: Folder,
             },
-            {
+            
+        ];
+        if (user.value.role.name === 'admin') {
+            items.push({
                 title: 'Users',
                 href: route('admin.users.index'),
                 icon: UserIcon,
-            },
-        ];
-        if (user.value.role.name === 'admin') {
+            });
             items.push({
                 title: 'Logs',
                 href: route('admin.logs'),
