@@ -18,6 +18,7 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
+            'order_number' => 'ORD-' . fake()->unique()->randomNumber(8),
             'status' => fake()->randomElement(['pending', 'processing', 'shipped', 'delivered']),
             'total_price' => fake()->randomFloat(2, 50, 2000),
         ];
