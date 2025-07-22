@@ -5,18 +5,36 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
 
 class AdminLogController extends Controller
 {
     public function index()
     {
-        // In a real application, you would fetch logs from a log file or database.
-        // For now, we'll return dummy data.
-        $logs = [
-            ['id' => 1, 'timestamp' => '2025-07-21 10:00:00', 'level' => 'INFO', 'message' => 'User admin@example.com logged in.'],
-            ['id' => 2, 'timestamp' => '2025-07-21 10:05:00', 'level' => 'WARN', 'message' => 'Failed login attempt for user manager@example.com.'],
-            ['id' => 3, 'timestamp' => '2025-07-21 10:10:00', 'level' => 'ERROR', 'message' => 'Product update failed for ID 123.'],
-        ];
+        $logFilePath = storage_path('logs/security.log');
+        $logs = [];
+
+        if (file_exists($logFilePath)) {
+            $fileContent = file($logFilePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+            foreach ($fileContent as $line) {
+                // Basic parsing: assuming log format like [YYYY-MM-DD HH:MM:SS] LEVEL: MESSAGE
+                if (preg_match('/^\[(.*)\] ([\w.]+): (.*)$/', $line, $matches)) {
+                    $logs[] = [
+                        'timestamp' => $matches[1],
+                        'level' => $matches[2],
+                        'message' => $matches[3],
+                    ];
+                } else {
+                    // Fallback for unparsable lines
+                    $logs[] = [
+                        'timestamp' => 'N/A',
+                        'level' => 'UNKNOWN',
+                        'message' => $line,
+                    ];
+                }
+            }
+        }
 
         return Inertia::render('admin/Logs', [
             'logs' => $logs,
