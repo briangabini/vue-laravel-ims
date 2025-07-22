@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/admin/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import {
     Dialog,
@@ -17,7 +17,17 @@ interface LogEntry {
     message: string;
 }
 
-defineProps<{ logs: LogEntry[] }>();
+interface LogPaginationData {
+    data: LogEntry[];
+    links: { url: string | null; label: string; active: boolean }[];
+    current_page: number;
+    last_page: number;
+    from: number;
+    to: number;
+    total: number;
+}
+
+defineProps<{ logs: LogPaginationData }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -53,13 +63,35 @@ const openLogModal = (log: LogEntry) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(log, index) in logs" :key="index" @click="openLogModal(log)" class="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <tr v-for="(log, index) in logs.data" :key="index" @click="openLogModal(log)" class="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">{{ log.timestamp }}</td>
                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">{{ log.level }}</td>
                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100 truncate max-w-xs">{{ log.message }}</td>
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+
+                    <div class="mt-4 flex justify-between items-center">
+                        <div class="text-sm text-gray-600 dark:text-gray-400">
+                            Showing {{ logs.from }} to {{ logs.to }} of {{ logs.total }} results
+                        </div>
+                        <div class="flex space-x-1">
+                            <!-- eslint-disable vue/no-v-text-v-html-on-component -->
+                            <Link
+                                v-for="link in logs.links"
+                                :key="link.label"
+                                :href="link.url || '#'"
+                                class="px-3 py-1 text-sm rounded-md"
+                                :class="{
+                                    'bg-indigo-500 text-white': link.active,
+                                    'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600': !link.active,
+                                    'pointer-events-none opacity-50': !link.url,
+                                }"
+                                v-html="link.label"
+                            />
+                            <!-- eslint-enable vue/no-v-text-v-html-on-component -->
+                        </div>
                     </div>
                 </div>
             </div>
