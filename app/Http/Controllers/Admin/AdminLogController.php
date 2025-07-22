@@ -13,28 +13,55 @@ class AdminLogController extends Controller
 {
     public function index(Request $request)
     {
-        $logFilePath = storage_path('logs/security.log');
+        $logType = $request->query('logType', 'security');
+        $logFile = match ($logType) {
+            'warning' => 'warning.log',
+            'error' => 'error.log',
+            'debug' => 'debug.log',
+            'info' => 'info.log',
+            default => 'security.log',
+        };
+
+        $logFilePath = storage_path('logs/' . $logFile);
         $allLogs = [];
 
         if (file_exists($logFilePath)) {
             $fileContent = file($logFilePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            $currentLogEntry = null;
 
             foreach ($fileContent as $line) {
-                // Basic parsing: assuming log format like [YYYY-MM-DD HH:MM:SS] LEVEL: MESSAGE
-                if (preg_match('/^\[(.*)\] ([\w.]+): (.*)$/', $line, $matches)) {
-                    $allLogs[] = [
+                // Check if the line starts with a timestamp pattern
+                if (preg_match('/^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\] ([a-zA-Z0-9_\.]+): (.*)$/', $line, $matches)) {
+                    // If there's a previous log entry, add it to allLogs
+                    if ($currentLogEntry !== null) {
+                        $allLogs[] = $currentLogEntry;
+                    }
+                    // Start a new log entry
+                    $currentLogEntry = [
                         'timestamp' => $matches[1],
                         'level' => $matches[2],
-                        'message' => $matches[3],
+                        'message' => trim($matches[3]),
+                        'summary' => trim($matches[3]), // Initialize summary with the first line
                     ];
+                } else if ($currentLogEntry !== null) {
+                    // This line is a continuation of the previous log entry
+                    $currentLogEntry['message'] .= "\n" . trim($line);
                 } else {
-                    // Fallback for unparsable lines
+                    // If a line doesn't start with a timestamp and there's no current entry,
+                    // it might be a malformed line at the beginning of the file.
+                    // For now, we'll just add it as an unknown entry.
                     $allLogs[] = [
                         'timestamp' => 'N/A',
                         'level' => 'UNKNOWN',
-                        'message' => $line,
+                        'message' => trim($line),
+                        'summary' => trim($line),
                     ];
                 }
+            }
+
+            // Add the last log entry if it exists
+            if ($currentLogEntry !== null) {
+                $allLogs[] = $currentLogEntry;
             }
         }
 
@@ -45,10 +72,12 @@ class AdminLogController extends Controller
 
         $logs = new LengthAwarePaginator($currentItems, count($allLogs), $perPage, $currentPage, [
             'path' => Paginator::resolveCurrentPath(),
+            'query' => ['logType' => $logType],
         ]);
 
         return Inertia::render('admin/Logs', [
             'logs' => $logs,
+            'logType' => $logType,
         ]);
     }
 }
