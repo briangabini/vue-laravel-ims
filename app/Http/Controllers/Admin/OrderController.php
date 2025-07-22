@@ -10,28 +10,30 @@ use Inertia\Response;
 
 class OrderController extends Controller
 {
-    public function __construct()
+    protected function middleware(): array
     {
-        $this->authorizeResource(Order::class, 'order');
+        return [
+            'authorize' => Order::class,
+        ];
     }
 
     public function index(): Response
     {
-        return Inertia::render('Admin/Orders/Index', [
+        return Inertia::render('admin/Orders/Index', [
             'orders' => Order::with('user')->latest()->paginate(10),
         ]);
     }
 
     public function show(Order $order): Response
     {
-        return Inertia::render('Admin/Orders/Show', [
+        return Inertia::render('admin/Orders/Show', [
             'order' => $order->load('orderItems.product', 'user'),
         ]);
     }
 
     public function edit(Order $order): Response
     {
-        return Inertia::render('Admin/Orders/Edit', [
+        return Inertia::render('admin/Orders/Edit', [
             'order' => $order,
         ]);
     }

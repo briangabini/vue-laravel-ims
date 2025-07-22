@@ -15,13 +15,15 @@ Route::get('dashboard', function () {
 
 // Routes accessible by BOTH 'admin' and 'manager'
 Route::middleware('role:admin,manager')->group(function () {
-    Route::resource('products', ProductController::class);
+        Route::resource('products', ProductController::class)->except(['destroy']);
     Route::resource('categories', CategoryController::class);
-    Route::resource('orders', OrderController::class)->only(['index', 'show', 'update']);
+    Route::resource('orders', OrderController::class)->only(['index', 'show', 'update', 'edit']);
 });
 
 // Routes accessible ONLY by 'admin'
 Route::middleware('role:admin')->group(function () {
     Route::resource('users', UserController::class);
-    // We will add routes for managing roles and viewing logs here later.
+    Route::delete('products/{product}', [App\Http\Controllers\Admin\ProductController::class, 'destroy'])->name('products.destroy');
+    Route::resource('roles', App\Http\Controllers\Admin\RoleController::class);
+    Route::get('logs', [App\Http\Controllers\Admin\AdminLogController::class, 'index'])->name('logs');
 });

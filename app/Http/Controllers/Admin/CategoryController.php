@@ -10,21 +10,23 @@ use Inertia\Response;
 
 class CategoryController extends Controller
 {
-    public function __construct()
+    protected function middleware(): array
     {
-        $this->authorizeResource(Category::class, 'category');
+        return [
+            'authorize' => Category::class,
+        ];
     }
 
     public function index(): Response
     {
-        return Inertia::render('Admin/Categories/Index', [
+        return Inertia::render('admin/Categories/Index', [
             'categories' => Category::latest()->paginate(10),
         ]);
     }
 
     public function create(): Response
     {
-        return Inertia::render('Admin/Categories/Create');
+        return Inertia::render('admin/Categories/Create');
     }
 
     public function store(Request $request): \Illuminate\Http\RedirectResponse
@@ -41,14 +43,14 @@ class CategoryController extends Controller
 
     public function show(Category $category): Response
     {
-        return Inertia::render('Admin/Categories/Show', [
+        return Inertia::render('admin/Categories/Show', [
             'category' => $category,
         ]);
     }
 
     public function edit(Category $category): Response
     {
-        return Inertia::render('Admin/Categories/Edit', [
+        return Inertia::render('admin/Categories/Edit', [
             'category' => $category,
         ]);
     }

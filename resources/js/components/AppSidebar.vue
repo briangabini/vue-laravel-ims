@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
 import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
-import { HomeIcon, UserIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/vue/24/outline';
+import { HomeIcon, UserIcon } from '@heroicons/vue/24/outline';
 import AppLogo from './AppLogo.vue';
 import { computed } from 'vue';
 
@@ -14,8 +12,9 @@ const page = usePage();
 const user = computed(() => page.props.auth.user);
 
 const mainNavItems = computed(() => {
+    let items = [];
     if (user.value && (user.value.role.name === 'admin' || user.value.role.name === 'manager')) {
-        return [
+        items = [
             {
                 title: 'Dashboard',
                 href: route('admin.dashboard'),
@@ -42,8 +41,20 @@ const mainNavItems = computed(() => {
                 icon: UserIcon,
             },
         ];
+        if (user.value.role.name === 'admin') {
+            items.push({
+                title: 'Logs',
+                href: route('admin.logs'),
+                icon: BookOpen,
+            });
+            items.push({
+                title: 'Roles',
+                href: route('admin.roles.index'),
+                icon: UserIcon,
+            });
+        }
     } else if (user.value && user.value.role.name === 'customer') {
-        return [
+        items = [
             {
                 title: 'Home',
                 href: route('home'),
@@ -57,17 +68,8 @@ const mainNavItems = computed(() => {
             
         ];
     }
-    return [];
+    return items;
 });
-
-/*const footerNavItems: NavItem[] = [
-    {
-        title: 'Logout',
-        href: route('logout'),
-        icon: ArrowRightStartOnRectangleIcon,
-        method: 'post',
-    },
-];*/
 </script>
 
 <template>

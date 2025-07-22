@@ -40,12 +40,14 @@ class LogFailedLogin
             return;
         }
 
-        LoginAttempt::create([
-            'user_id' => $user ? $user->id : null,
-            'ip_address' => request()->ip(),
-            'successful' => false,
-            'logged_in_at' => now(),
-        ]);
+        if ($user) {
+            LoginAttempt::create([
+                'user_id' => $user->id,
+                'ip_address' => request()->ip(),
+                'successful' => false,
+                'logged_in_at' => now(),
+            ]);
+        }
 
         Log::channel('security')->warning('User login failed.', [
             'email_attempted' => $event->credentials['email'],

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,6 +27,13 @@ class Product extends Model
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = ['quantity'];
+
+    /**
      * Get the category that the product belongs to.
      */
     public function category(): BelongsTo
@@ -39,5 +47,15 @@ class Product extends Model
     public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    /**
+     * Get the quantity of the product.
+     */
+    public function quantity(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, $attributes) => $attributes['stock'],
+        );
     }
 }

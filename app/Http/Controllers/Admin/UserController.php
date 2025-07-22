@@ -11,21 +11,23 @@ use Inertia\Response;
 
 class UserController extends Controller
 {
-    public function __construct()
+    protected function middleware(): array
     {
-        $this->authorizeResource(User::class, 'user');
+        return [
+            'authorize' => User::class,
+        ];
     }
 
     public function index(): Response
     {
-        return Inertia::render('Admin/Users/Index', [
+        return Inertia::render('admin/Users/Index', [
             'users' => User::with('role')->latest()->paginate(10),
         ]);
     }
 
     public function create(): Response
     {
-        return Inertia::render('Admin/Users/Create', [
+        return Inertia::render('admin/Users/Create', [
             'roles' => Role::all(),
         ]);
     }
@@ -46,14 +48,14 @@ class UserController extends Controller
 
     public function show(User $user): Response
     {
-        return Inertia::render('Admin/Users/Show', [
+        return Inertia::render('admin/Users/Show', [
             'user' => $user->load('role'),
         ]);
     }
 
     public function edit(User $user): Response
     {
-        return Inertia::render('Admin/Users/Edit', [
+        return Inertia::render('admin/Users/Edit', [
             'user' => $user,
             'roles' => Role::all(),
         ]);

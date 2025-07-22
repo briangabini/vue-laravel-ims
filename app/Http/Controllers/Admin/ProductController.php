@@ -11,21 +11,23 @@ use Inertia\Response;
 
 class ProductController extends Controller
 {
-    public function __construct()
+    protected function middleware(): array
     {
-        $this->authorizeResource(Product::class, 'product');
+        return [
+            'authorize' => Product::class,
+        ];
     }
 
     public function index(): Response
     {
-        return Inertia::render('Admin/Products/Index', [
+        return Inertia::render('admin/Products/Index', [
             'products' => Product::with('category')->latest()->paginate(10),
         ]);
     }
 
     public function create(): Response
     {
-        return Inertia::render('Admin/Products/Create', [
+        return Inertia::render('admin/Products/Create', [
             'categories' => Category::all(),
         ]);
     }
@@ -47,14 +49,14 @@ class ProductController extends Controller
 
     public function show(Product $product): Response
     {
-        return Inertia::render('Admin/Products/Show', [
+        return Inertia::render('admin/Products/Show', [
             'product' => $product->load('category'),
         ]);
     }
 
     public function edit(Product $product): Response
     {
-        return Inertia::render('Admin/Products/Edit', [
+        return Inertia::render('admin/Products/Edit', [
             'product' => $product,
             'categories' => Category::all(),
         ]);

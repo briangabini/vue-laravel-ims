@@ -54,7 +54,7 @@ const submit = () => {
             });*/
         },
         onError: (errors) => {
-            let errorMessage = 'There was an error updating your security questions.';
+            
             if (Object.keys(errors).length > 0) {
                 errorMessage = Object.values(errors).join(' ');
             }

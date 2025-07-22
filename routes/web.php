@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\OrderController as CustomerOrderController;
+use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Admin\ProductController as PublicProductController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -15,6 +15,8 @@ Route::get('/', function () {
     ]);
 })->name('welcome');
 
+Route::get('/products', [App\Http\Controllers\ProductController::class, 'index'])->name('products.index');
+
 Route::get('/products/{product}', [PublicProductController::class, 'show'])->name('products.show');
 
 // Authenticated user routes
@@ -23,6 +25,10 @@ Route::middleware(['auth', 'verified'])->group(function() {
     // Customer viewing their own orders
     Route::get('/my-orders', [CustomerOrderController::class, 'index'])->name('my-orders.index');
     Route::get('/my-orders/{order}', [CustomerOrderController::class, 'show'])->name('my-orders.show');
+    Route::get('/my-orders/create', function () {
+        return Inertia::render('customers/PlaceOrder');
+    })->name('customer.orders.create');
+    Route::post('/my-orders', [CustomerOrderController::class, 'store'])->name('customer.orders.store');
 });
 
 

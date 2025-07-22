@@ -8,6 +8,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
 use Illuminate\Validation\ValidationException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -74,6 +75,12 @@ return Application::configure(basePath: dirname(__DIR__))
             Log::channel('security')->warning('Access Control Failure', $context);
 
             return false; // stop propagating the exception
+        });
+
+        $exceptions->renderable(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e) {
+            return Inertia::render('errors/404', ['status' => $e->getStatusCode()])
+                ->toResponse(request())
+                ->setStatusCode($e->getStatusCode());
         });
     })
 

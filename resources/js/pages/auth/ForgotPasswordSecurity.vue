@@ -15,7 +15,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 
-const props = defineProps({
+defineProps({
     securityQuestions: Array,
 });
 
