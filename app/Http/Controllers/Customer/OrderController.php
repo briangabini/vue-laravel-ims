@@ -34,7 +34,7 @@ class OrderController extends Controller
             $order = Order::create([
                 'user_id' => auth()->id(),
                 'order_number' => 'ORD-' . uniqid(), // Simple unique order number
-                'total_amount' => $product->price * $request->quantity,
+                'total_price' => ($product->price * $request->quantity) * 100,
                 'status' => 'pending',
             ]);
 
@@ -42,7 +42,7 @@ class OrderController extends Controller
                 'order_id' => $order->id,
                 'product_id' => $product->id,
                 'quantity' => $request->quantity,
-                'price' => $product->price,
+                'price_per_unit' => $product->price,
             ]);
         });
 

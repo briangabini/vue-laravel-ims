@@ -44,7 +44,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="order in orders.data" :key="order.id">
+                                <tr v-for="order in orders.data" :key="order.id" @click="$inertia.visit(route('admin.orders.show', order.id))" class="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">{{ order.order_number }}</td>
                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">{{ order.user.name }}</td>
                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">${{ order.total_amount.toFixed(2) }}</td>
@@ -52,7 +52,6 @@ const breadcrumbs: BreadcrumbItem[] = [
                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">{{ new Date(order.created_at).toLocaleDateString() }}</td>
                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">
                                         <Link :href="route('admin.orders.edit', order.id)" class="text-indigo-600 hover:text-indigo-900 mr-2">Edit Status</Link>
-                                        <Link :href="route('admin.orders.show', order.id)" class="text-blue-600 hover:text-blue-900">View</Link>
                                     </td>
                                 </tr>
                             </tbody>

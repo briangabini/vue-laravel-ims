@@ -34,14 +34,14 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: route('admin.orders.index'),
     },
     {
-        title: `Order #${props.order.order_number}`,
+        title: `Order #${props.order?.order_number || 'N/A'}`,
         href: '#',
     },
 ];
 </script>
 
 <template>
-    <Head :title="`Order Details: #${order.order_number}`" />
+    <Head :title="`Order Details: #${order?.order_number || 'N/A'}`" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
@@ -49,10 +49,10 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <div class="p-4">
                     <h1 class="text-2xl font-bold mb-4">Order Details: #{{ order.order_number }}</h1>
                     <div class="mb-4">
-                        <p class="text-gray-600 dark:text-gray-300"><strong>Customer:</strong> {{ order.user.name }} ({{ order.user.email }})</p>
-                        <p class="text-gray-600 dark:text-gray-300"><strong>Total Amount:</strong> ${{ order.total_amount.toFixed(2) }}</p>
-                        <p class="text-gray-600 dark:text-gray-300"><strong>Status:</strong> {{ order.status }}</p>
-                        <p class="text-gray-600 dark:text-gray-300"><strong>Order Date:</strong> {{ new Date(order.created_at).toLocaleDateString() }}</p>
+                        <p class="text-gray-600 dark:text-gray-300"><strong>Customer:</strong> {{ order.user?.name || 'N/A' }} ({{ order.user?.email || 'N/A' }})</p>
+                        <p class="text-gray-600 dark:text-gray-300"><strong>Total Amount:</strong> ${{ (order.total_amount || 0).toFixed(2) }}</p>
+                        <p class="text-gray-600 dark:text-gray-300"><strong>Status:</strong> {{ order.status || 'N/A' }}</p>
+                        <p class="text-gray-600 dark:text-gray-300"><strong>Order Date:</strong> {{ order.created_at ? new Date(order.created_at).toLocaleDateString() : 'N/A' }}</p>
                     </div>
 
                     <h2 class="text-xl font-bold mb-2">Order Items</h2>
@@ -70,8 +70,8 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 <tr v-for="item in order.order_items" :key="item.id">
                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">{{ item.product.name }}</td>
                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">{{ item.quantity }}</td>
-                                    <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">${{ item.price.toFixed(2) }}</td>
-                                    <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">${{ (item.quantity * item.price).toFixed(2) }}</td>
+                                    <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">${{ (item.price || 0).toFixed(2) }}</td>
+                                    <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">${{ ((item.quantity || 0) * (item.price || 0)).toFixed(2) }}</td>
                                 </tr>
                             </tbody>
                         </table>

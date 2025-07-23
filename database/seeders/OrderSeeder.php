@@ -33,15 +33,17 @@ class OrderSeeder extends Seeder
 
                 for ($i = 0; $i < $itemCount; $i++) {
                     $product = $products->random();
+                    $quantity = rand(1, 5);
                     $item = OrderItem::factory()->create([
                         'order_id' => $order->id,
                         'product_id' => $product->id,
                         'price_per_unit' => $product->price,
+                        'quantity' => $quantity,
                     ]);
                     $totalPrice += $item->price_per_unit * $item->quantity;
                 }
 
-                $order->total_price = $totalPrice;
+                $order->total_price = $totalPrice * 100;
                 $order->save();
             });
         }

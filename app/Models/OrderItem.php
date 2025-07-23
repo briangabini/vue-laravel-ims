@@ -23,6 +23,16 @@ class OrderItem extends Model
         'price_per_unit',
     ];
 
+    protected $appends = ['price'];
+
+    /**
+     * Get the price for the order item.
+     */
+    public function getPriceAttribute(): float
+    {
+        return $this->price_per_unit;
+    }
+
     public $timestamps = false;
 
     /**
