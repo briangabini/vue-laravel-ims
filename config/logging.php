@@ -35,9 +35,7 @@ return [
         'stack' => [
             'driver'           => 'stack',
             'channels'         => [
-                'debug', 'info', 'notice',
-                'warning', 'error', 'critical',
-                'alert', 'emergency',
+                'error', 'critical', 'alert', 'emergency',
             ],
             'ignore_exceptions' => false,
         ],
