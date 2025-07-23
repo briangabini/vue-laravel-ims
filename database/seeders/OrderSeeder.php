@@ -24,8 +24,9 @@ class OrderSeeder extends Seeder
 
         if ($users->isNotEmpty() && $products->isNotEmpty()) {
 
-            Order::factory(25)->make(['total_price' => 0])->each(function ($order) use ($users, $products) {
+            Order::factory(25)->make()->each(function ($order) use ($users, $products) {
                 $order->user_id = $users->random()->id;
+                $order->created_at = fake()->dateTimeBetween('-7 days', 'now');
                 $order->save();
 
                 $totalPrice = 0;

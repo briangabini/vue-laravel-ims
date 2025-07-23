@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // Admin Dashboard
-Route::get('dashboard', function () {
-    return Inertia::render('admin/Dashboard');
-})->name('dashboard')->middleware('role:admin,manager');
+Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('role:admin,manager');
 
 // Routes accessible by BOTH 'admin' and 'manager'
 Route::middleware('role:admin,manager')->group(function () {
