@@ -80,6 +80,7 @@ const removeItem = (cartItemId: number) => {
                         <TableRow>
                             <TableHead>Product</TableHead>
                             <TableHead>Quantity</TableHead>
+                            <TableHead>Stock</TableHead>
                             <TableHead class="text-right">Price</TableHead>
                             <TableHead class="text-right">Subtotal</TableHead>
                             <TableHead class="text-right">Actions</TableHead>
@@ -109,6 +110,7 @@ const removeItem = (cartItemId: number) => {
                                     </Button>
                                 </div>
                             </TableCell>
+                            <TableCell>{{ item.product.stock }}</TableCell>
                             <TableCell class="text-right">${{ item.product.price.toFixed(2) }}</TableCell>
                             <TableCell class="text-right">${{ (item.product.price * item.quantity).toFixed(2) }}</TableCell>
                             <TableCell class="text-right">
