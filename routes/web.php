@@ -23,6 +23,7 @@ Route::middleware(['auth', 'verified', 'role:customer'])->group(function() {
     Route::post('/cart', [CartController::class, 'store'])->name('customers.cart.store');
     Route::post('/cart/update', [CartController::class, 'update'])->name('customers.cart.update');
     Route::delete('/cart', [CartController::class, 'destroy'])->name('customers.cart.destroy');
+    Route::post('/checkout', [CartController::class, 'checkout'])->name('customers.checkout');
 
     Route::get('/order-status', function() {
         return Inertia::render('customers/OrderStatus');

@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
+use App\Models\Order;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -86,5 +90,62 @@ class CartController extends Controller
             ->delete();
 
         return redirect()->back()->with('success', 'Item removed from cart.');
+    }
+
+    public function checkout(Request $request)
+    {
+        $user = Auth::user();
+        $cartItems = $user->carts()->with('product')->get();
+
+        if ($cartItems->isEmpty()) {
+            throw ValidationException::withMessages([
+                'cart' => 'Your cart is empty.',
+            ]);
+        }
+
+        DB::transaction(function () use ($user, $cartItems) {
+            $totalPrice = 0;
+            $orderItemsData = [];
+
+            foreach ($cartItems as $cartItem) {
+                $product = $cartItem->product;
+
+                // Check stock
+                if ($cartItem->quantity > $product->stock) {
+                    throw ValidationException::withMessages([
+                        'stock' => "Not enough stock for {$product->name}. Available: {$product->stock}",
+                    ]);
+                }
+
+                $totalPrice += $product->price * $cartItem->quantity;
+
+                $orderItemsData[] = [
+                    'product_id' => $product->id,
+                    'quantity' => $cartItem->quantity,
+                    'price_per_unit' => $product->price,
+                ];
+
+                // Update product stock
+                $product->stock -= $cartItem->quantity;
+                $product->save();
+            }
+
+            // Create the order
+            $order = Order::create([
+                'user_id' => $user->id,
+                'status' => 'pending',
+                'total_price' => $totalPrice,
+            ]);
+
+            // Create order items
+            foreach ($orderItemsData as $itemData) {
+                $order->orderItems()->create($itemData);
+            }
+
+            // Clear the cart
+            $user->carts()->delete();
+        });
+
+        return redirect()->route('customers.orders')->with('success', 'Order placed successfully!');
     }
 }

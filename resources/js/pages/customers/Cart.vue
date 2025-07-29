@@ -67,6 +67,17 @@ const removeItem = (cartItemId: number) => {
         },
     });
 };
+
+const checkout = () => {
+    router.post(route('customers.checkout'), {}, {
+        onSuccess: () => {
+            toast.success('Order placed successfully!');
+        },
+        onError: (errors) => {
+            toast.error(errors.message || 'Failed to place order.');
+        },
+    });
+};
 </script>
 
 <template>
@@ -122,8 +133,13 @@ const removeItem = (cartItemId: number) => {
                     </TableBody>
                 </Table>
 
-                <div class="mt-4 text-right text-xl font-bold">
-                    Total: ${{ cartTotal.toFixed(2) }}
+                <div class="mt-4 flex justify-end items-center space-x-4">
+                    <div class="text-xl font-bold">
+                        Total: ${{ cartTotal.toFixed(2) }}
+                    </div>
+                    <Button @click="checkout" :disabled="cartItems.length === 0">
+                        Checkout
+                    </Button>
                 </div>
             </div>
             <div v-else class="text-center text-muted-foreground">
