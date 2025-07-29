@@ -10,6 +10,7 @@ use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityQuestionController;
+use App\Http\Controllers\Customer\LoginAttemptController;
 
 // Public customer-facing routes
 Route::get('/', [HomeController::class, 'index'])->name('customers.home');
@@ -25,9 +26,7 @@ Route::middleware(['auth', 'verified', 'role:customer'])->group(function() {
     Route::delete('/cart', [CartController::class, 'destroy'])->name('customers.cart.destroy');
     Route::post('/checkout', [CartController::class, 'checkout'])->name('customers.checkout');
 
-    Route::get('/order-status', function() {
-        return Inertia::render('customers/OrderStatus');
-    })->name('customers.order-status');
+    Route::get('/order-status', [CustomerOrderController::class, 'checkStatus'])->name('customers.order-status');
 
     // Customer Settings Routes
     Route::prefix('customers/settings')->name('customers.settings.')->group(function () {
@@ -40,11 +39,11 @@ Route::middleware(['auth', 'verified', 'role:customer'])->group(function() {
 
         Route::get('security-questions', [SecurityQuestionController::class, 'edit'])->name('security-questions');
         Route::patch('security-questions', [SecurityQuestionController::class, 'update'])->name('security-questions.update');
+
+        Route::get('login-attempts', [LoginAttemptController::class, 'index'])->name('login-attempts');
     });
 
-    Route::get('/customers/orders', function() {
-        return Inertia::render('customers/Orders');
-    })->name('customers.orders');
+    Route::get('/customers/orders', [CustomerOrderController::class, 'index'])->name('customers.orders');
 });
 
 // Authenticated user routes

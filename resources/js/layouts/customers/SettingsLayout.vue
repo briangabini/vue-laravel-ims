@@ -18,6 +18,10 @@ const sidebarNavItems: NavItem[] = [
         title: 'Security Questions',
         href: route('customers.settings.security-questions'),
     },
+    {
+        title: 'Login Attempts',
+        href: route('customers.settings.login-attempts'),
+    },
 ];
 
 const page = usePage();

@@ -7,17 +7,48 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
-        $orders = auth()->user()->orders; // Fetch orders for the authenticated user
+        $orders = Auth::user()->orders()->orderByDesc('created_at')->get();
 
-        return Inertia::render('customers/MyOrders', [
+        return Inertia::render('customers/Orders', [
             'orders' => $orders,
+        ]);
+    }
+
+    public function show(Order $order): Response
+    {
+        // Ensure the order belongs to the authenticated user
+        if ($order->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $order->load('orderItems.product');
+
+        return Inertia::render('customers/OrderDetails', [
+            'order' => $order,
+        ]);
+    }
+
+    public function checkStatus(Request $request): Response
+    {
+        $request->validate([
+            'order_number' => 'required|string|max:255',
+        ]);
+
+        $order = Order::where('order_number', $request->order_number)
+                      ->with('orderItems.product')
+                      ->first();
+
+        return Inertia::render('customers/OrderStatus', [
+            'order' => $order,
         ]);
     }
 

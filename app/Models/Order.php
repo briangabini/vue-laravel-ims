@@ -33,6 +33,14 @@ class Order extends Model
     protected $appends = ['total_amount'];
 
     /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'order_number';
+    }
+
+    /**
      * Get the user that placed the order.
      */
     public function user(): BelongsTo

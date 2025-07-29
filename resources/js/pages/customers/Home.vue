@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { router, usePage } from '@inertiajs/vue3';
 import { toast } from 'vue-sonner';
 import { computed, onMounted, ref, watch } from 'vue';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import {
     RadioGroup,
@@ -122,14 +121,6 @@ const addToCart = (productId: number) => {
 
             <!-- Product Listing -->
             <div class="w-3/4">
-                <Alert v-if="lastLoginAttempt" class="mb-4">
-                    <AlertTitle>Last Login Attempt</AlertTitle>
-                    <AlertDescription>
-                        Your last login attempt was on {{ lastLoginAttempt.logged_in_at }} from {{ lastLoginAttempt.ip_address }}.
-                        It was {{ lastLoginAttempt.successful ? 'successful' : 'unsuccessful' }}.
-                    </AlertDescription>
-                </Alert>
-
                 <h1 class="text-2xl font-bold mb-6">Products</h1>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div v-for="product in products" :key="product.id" class="border p-4 rounded-lg shadow-sm">

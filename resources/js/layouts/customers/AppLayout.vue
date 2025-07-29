@@ -14,6 +14,14 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button';
+import Breadcrumbs from '@/components/Breadcrumbs.vue';
+import { type BreadcrumbItem } from '@/types';
+
+interface Props {
+    breadcrumbs?: BreadcrumbItem[];
+}
+
+defineProps<Props>();
 
 const logout = () => {
     router.post(route('logout'));
@@ -67,6 +75,11 @@ const logout = () => {
                 </div>
             </div>
         </nav>
+        <div v-if="breadcrumbs && breadcrumbs.length > 0" class="flex w-full border-b border-sidebar-border/70">
+            <div class="mx-auto flex h-12 w-full items-center justify-start px-4 text-neutral-500 md:max-w-7xl">
+                <Breadcrumbs :breadcrumbs="breadcrumbs" />
+            </div>
+        </div>
         <main>
             <slot />
         </main>
