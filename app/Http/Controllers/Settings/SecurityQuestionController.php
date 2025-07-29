@@ -29,6 +29,13 @@ class SecurityQuestionController extends Controller
             'userSecurityAnswers' => $userSecurityAnswers->toArray(),
         ]);
 
+        if (auth()->user()->role->name === 'customer') {
+            return Inertia::render('customers/SecurityQuestions', [
+                'allSecurityQuestions' => $allSecurityQuestions,
+                'userSecurityAnswers' => $userSecurityAnswers,
+            ]);
+        }
+
         return Inertia::render('settings/SecurityQuestions', [
             'allSecurityQuestions' => $allSecurityQuestions,
             'userSecurityAnswers' => $userSecurityAnswers,
@@ -58,6 +65,10 @@ class SecurityQuestionController extends Controller
                 ['user_id' => $user->id, 'security_question_id' => $q['security_question_id']],
                 ['answer' => $q['answer']]
             );
+        }
+
+        if (auth()->user()->role->name === 'customer') {
+            return to_route('customers.settings.security-questions')->with('success', 'Security questions updated successfully.');
         }
 
         return back()->with('success', 'Security questions updated successfully.');

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import {
     Avatar,
     AvatarFallback,
@@ -14,6 +14,10 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button';
+
+const logout = () => {
+    router.post(route('logout'));
+};
 </script>
 
 <template>
@@ -47,11 +51,15 @@ import { Button } from '@/components/ui/button';
                             <DropdownMenuContent>
                                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem>
-                                    <Link :href="route('customers.settings')">Settings</Link>
+                                <DropdownMenuItem as-child>
+                                    <Link :href="route('customers.settings.profile')">Settings</Link>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem as-child>
                                     <Link :href="route('customers.orders')">Orders</Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem @click="logout">
+                                    Logout
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>

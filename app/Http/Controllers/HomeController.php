@@ -15,6 +15,7 @@ class HomeController extends Controller
             return Inertia::render('admin/Home');
         } else if (auth()->user()->role->name === 'customer') {
             $products = Product::all();
+            \Log::info('HomeController: last_login_attempt in session', (array) session('flash.last_login_attempt'));
             return Inertia::render('customers/Home', [
                 'products' => $products,
             ]);

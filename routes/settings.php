@@ -6,7 +6,7 @@ use App\Http\Controllers\Settings\SecurityQuestionController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'role:admin,manager'])->group(function () {
     Route::redirect('settings', '/settings/profile');
 
     Route::get('settings/security-questions', [SecurityQuestionController::class, 'edit'])->name('security-questions.edit');

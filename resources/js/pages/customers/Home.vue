@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/customers/AppLayout.vue';
 import { Button } from '@/components/ui/button';
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import { toast } from 'vue-sonner';
+import { computed, onMounted } from 'vue';
 
 interface Product {
     id: number;
@@ -17,6 +18,18 @@ interface Props {
 }
 
 defineProps<Props>();
+
+const page = usePage();
+const lastLoginAttempt = computed(() => page.props.flash?.last_login_attempt);
+
+onMounted(() => {
+    if (lastLoginAttempt.value) {
+        toast.success(
+            `Your last login attempt was on ${lastLoginAttempt.value.logged_in_at} from ${lastLoginAttempt.value.ip_address}. It was ${lastLoginAttempt.value.successful ? 'successful' : 'unsuccessful'}.`,
+            { duration: 5000 }
+        );
+    }
+});
 
 const addToCart = (productId: number) => {
     router.post(route('customers.cart.store'), { product_id: productId }, {

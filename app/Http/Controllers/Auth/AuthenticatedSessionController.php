@@ -52,10 +52,13 @@ class AuthenticatedSessionController extends Controller
                     'ip_address' => $lastLogin->ip_address,
                     'logged_in_at' => $lastLogin->logged_in_at->toDayDateTimeString(),
                 ]);
+                \Log::info('AuthenticatedSessionController: last_login_attempt set in session', $request->session()->get('last_login_attempt'));
             }
 
             if ($user && in_array($user->role->name, ['admin', 'manager'])) {
                 return redirect()->intended(route('admin.dashboard', absolute: false));
+            } else if ($user && $user->role->name === 'customer') {
+                return redirect()->route('customers.home');
             }
 
             return redirect()->intended(route('home', absolute: false));
@@ -74,6 +77,6 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('login');
     }
 }

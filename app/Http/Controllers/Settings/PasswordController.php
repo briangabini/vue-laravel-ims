@@ -19,6 +19,10 @@ class PasswordController extends Controller
      */
     public function edit(): Response
     {
+        if (auth()->user()->role->name === 'customer') {
+            return Inertia::render('customers/Password');
+        }
+
         return Inertia::render('settings/Password');
     }
 
@@ -43,6 +47,10 @@ class PasswordController extends Controller
             'user_id' => $user->id,
             'password_hash' => $user->password,
         ]);
+
+        if (auth()->user()->role->name === 'customer') {
+            return to_route('customers.settings.password');
+        }
 
         return back();
     }

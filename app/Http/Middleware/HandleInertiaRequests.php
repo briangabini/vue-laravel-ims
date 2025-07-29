@@ -54,7 +54,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'flash' => [
-                'last_login_attempt' => fn () => $request->session()->get('last_login_attempt'),
+                'last_login_attempt' => $request->session()->pull('last_login_attempt'),
             ],
         ];
     }
