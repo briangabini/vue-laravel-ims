@@ -14,7 +14,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { PlusCircle, Trash2 } from 'lucide-vue-next';
-import AppLayout from '@/layouts/AppLayout.vue';
+import AppLayout from '@/layouts/admin/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import { type BreadcrumbItem } from '@/types';
@@ -54,7 +54,7 @@ const submit = () => {
             });*/
         },
         onError: (errors) => {
-            
+
             if (Object.keys(errors).length > 0) {
                 errorMessage = Object.values(errors).join(' ');
             }
