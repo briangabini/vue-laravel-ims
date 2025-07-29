@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -13,7 +14,10 @@ class HomeController extends Controller
         if (auth()->user()->role->name === 'admin' || auth()->user()->role->name === 'manager') {
             return Inertia::render('admin/Home');
         } else if (auth()->user()->role->name === 'customer') {
-            return Inertia::render('customers/CustomerDashboard');
+            $products = Product::all();
+            return Inertia::render('customers/Home', [
+                'products' => $products,
+            ]);
         }
         // Fallback for any other roles or if role is not set
         return Inertia::render('Welcome');
