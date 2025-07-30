@@ -395,8 +395,10 @@ class ProductSeeder extends Seeder
             ],
         ];
 
-        foreach ($products as $product) {
-            Product::create($product);
+        foreach ($products as $index => $productData) {
+            $product = Product::create($productData);
+            $product->image = 'product-image-' . ($index + 1) . '.png'; // Assuming images are .png and start from 1
+            $product->save();
         }
     }
 }

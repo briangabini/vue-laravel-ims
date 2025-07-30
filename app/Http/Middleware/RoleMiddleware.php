@@ -18,7 +18,7 @@ class RoleMiddleware
     {
         // Check if the user is authenticated and if their role name is in the list of required roles.
         if (! $request->user() || ! in_array($request->user()->role->name, $roles)) {
-            // If not, deny access.
+            \Log::warning('Access control failure: User ' . ($request->user() ? $request->user()->id : 'unauthenticated') . ' attempted to access a resource requiring roles: ' . implode(', ', $roles) . ' with current role: ' . ($request->user() ? $request->user()->role->name : 'none') . ' from IP: ' . $request->ip());
             abort(403, 'THIS ACTION IS UNAUTHORIZED.');
         }
 
