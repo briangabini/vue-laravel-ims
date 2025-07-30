@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
@@ -32,7 +33,7 @@ class Product extends Model
      *
      * @var array<int, string>
      */
-    protected $appends = ['quantity'];
+    protected $appends = ['quantity', 'image_url'];
 
     /**
      * Get the category that the product belongs to.
@@ -58,5 +59,13 @@ class Product extends Model
         return Attribute::make(
             get: fn ($value, $attributes) => $attributes['stock'],
         );
+    }
+
+    /**
+     * Get the URL for the product image.
+     */
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->image ? Storage::url('products/' . $this->image) : null;
     }
 }
