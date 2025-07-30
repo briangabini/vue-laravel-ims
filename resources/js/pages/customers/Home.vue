@@ -55,8 +55,9 @@ const lastLoginAttempt = computed(() => page.props.flash?.last_login_attempt);
 
 onMounted(() => {
     if (lastLoginAttempt.value) {
+        const ipAddress = lastLoginAttempt.value.ip_address || 'N/A';
         toast.success(
-            `Your last login attempt was on ${lastLoginAttempt.value.logged_in_at} from ${lastLoginAttempt.value.ip_in_address}. It was ${lastLoginAttempt.value.successful ? 'successful' : 'unsuccessful'}.`,
+            `Your last login attempt was on ${lastLoginAttempt.value.logged_in_at} from ${ipAddress}. It was ${lastLoginAttempt.value.successful ? 'successful' : 'unsuccessful'}.`,
             { duration: 5000 }
         );
     }

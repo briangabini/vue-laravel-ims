@@ -47,9 +47,10 @@ class AuthenticatedSessionController extends Controller
             $authenticatedUser = $request->user();
 
             if ($lastLogin) {
+                \Log::debug('AuthenticatedSessionController: $lastLogin before flash', $lastLogin->toArray());
                 $request->session()->flash('last_login_attempt', [
                     'successful' => $lastLogin->successful,
-                    'ip_address' => $lastLogin->ip_address,
+                    'ip_address' => $lastLogin->ip_address ?? 'N/A',
                     'logged_in_at' => $lastLogin->logged_in_at->toDayDateTimeString(),
                 ]);
                 \Log::info('AuthenticatedSessionController: last_login_attempt set in session', $request->session()->get('last_login_attempt'));
