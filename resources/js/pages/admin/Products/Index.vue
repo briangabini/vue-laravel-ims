@@ -84,7 +84,7 @@ const deleteProduct = (id: number) => {
                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">${{ product.price.toFixed(2) }}</td>
                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">{{ product.quantity }}</td>
                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100 text-center">
-                                        <img v-if="product.image" :src="`/storage/${product.image}`" alt="Product Image" class="w-16 h-16 object-cover rounded-md mx-auto" />
+                                        <img v-if="product.image_url" :src="product.image_url" alt="Product Image" class="w-16 h-16 object-cover rounded-md mx-auto" />
                                         <span v-else class="text-xs text-gray-500">No Image</span>
                                     </td>
                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">

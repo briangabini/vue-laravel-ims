@@ -91,7 +91,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <div v-if="form.errors.image" class="text-red-500 text-sm mt-1">{{ form.errors.image }}</div>
                             <div v-if="product.image" class="mt-2">
                                 <p class="text-sm text-gray-600 dark:text-gray-400">Current Image:</p>
-                                <img :src="`/storage/${product.image}`" alt="Product Image" class="mt-1 w-32 h-32 object-cover rounded-md" />
+                                <img :src="product.image_url" alt="Product Image" class="mt-1 w-32 h-32 object-cover rounded-md" />
                             </div>
                         </div>
 
