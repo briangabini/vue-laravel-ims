@@ -13,6 +13,14 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
 
 interface Product {
     id: number;
@@ -76,7 +84,23 @@ const formatTimestamp = (timestamp: string) => {
 </script>
 
 <template>
-    <AppLayout>
+    <AppLayout title="Order Status">
+        <div class="container mx-auto py-4">
+            <Breadcrumb>
+                <BreadcrumbList>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink :href="route('customers.home')">
+                            Home
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbPage>Order Status</BreadcrumbPage>
+                    </BreadcrumbItem>
+                </BreadcrumbList>
+            </Breadcrumb>
+        </div>
+
         <div class="container mx-auto py-8">
             <div class="max-w-md mx-auto">
                 <h1 class="text-2xl font-bold mb-4">Check Order Status</h1>

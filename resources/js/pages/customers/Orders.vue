@@ -8,7 +8,15 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Head, Link } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
 
 interface Order {
     id: number;
@@ -26,8 +34,22 @@ defineProps<Props>();
 </script>
 
 <template>
-    <AppLayout>
-        <Head title="My Orders" />
+    <AppLayout title="My Orders">
+        <div class="container mx-auto py-4">
+            <Breadcrumb>
+                <BreadcrumbList>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink :href="route('customers.home')">
+                            Home
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbPage>My Orders</BreadcrumbPage>
+                    </BreadcrumbItem>
+                </BreadcrumbList>
+            </Breadcrumb>
+        </div>
 
         <div class="container mx-auto py-8">
             <h1 class="text-2xl font-bold mb-6">My Orders</h1>

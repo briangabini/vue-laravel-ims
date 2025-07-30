@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/customers/AppLayout.vue';
-import { Head } from '@inertiajs/vue3';
 import {
     Table,
     TableBody,
@@ -9,8 +8,14 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { type BreadcrumbItem } from '@/types';
-import { computed } from 'vue';
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
 
 interface Product {
     id: number;
@@ -43,32 +48,32 @@ defineProps<Props>();
 const formatTimestamp = (timestamp: string) => {
     return new Date(timestamp).toLocaleString();
 };
-
-const breadcrumbs = computed<BreadcrumbItem[]>(() => {
-    if (!props.order) {
-        return [
-            {
-                title: 'My Orders',
-                href: route('customers.orders'),
-            },
-        ];
-    }
-    return [
-        {
-            title: 'My Orders',
-            href: route('customers.orders'),
-        },
-        {
-            title: `Order #${props.order.order_number}`,
-            href: route('my-orders.show', props.order.order_number),
-        },
-    ];
-});
 </script>
 
 <template>
-    <AppLayout :breadcrumbs="breadcrumbs">
-        <Head :title="order ? `Order #${order.order_number}` : 'Order Details'" />
+    <AppLayout :title="order ? `Order #${order.order_number}` : 'Order Details'">
+        <div class="container mx-auto py-4">
+            <Breadcrumb>
+                <BreadcrumbList>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink :href="route('customers.home')">
+                            Home
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbLink :href="route('my-orders.index')">
+                            My Orders
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbPage v-if="order">Order #{{ order.order_number }}</BreadcrumbPage>
+                        <BreadcrumbPage v-else>Order Details</BreadcrumbPage>
+                    </BreadcrumbItem>
+                </BreadcrumbList>
+            </Breadcrumb>
+        </div>
 
         <div v-if="order" class="container mx-auto py-8">
             <h1 class="text-2xl font-bold mb-6">Order #{{ order.order_number }}</h1>
