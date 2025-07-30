@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/customers/AppLayout.vue';
 import { Button } from '@/components/ui/button';
-import { router, usePage } from '@inertiajs/vue3';
+import { router, usePage, Link } from '@inertiajs/vue3';
 import { toast } from 'vue-sonner';
 import { computed, onMounted, ref, reactive } from 'vue';
 import { Input } from '@/components/ui/input';
@@ -31,7 +31,12 @@ interface Product {
 }
 
 interface Props {
-    products: Product[];
+    products: {
+        data: Product[];
+        links: { url: string | null; label: string; active: boolean }[];
+        current_page: number;
+        last_page: number;
+    };
     categories: Category[];
     filters: {
         category?: string;
@@ -113,79 +118,84 @@ const resetFilters = () => {
         <div class="container mx-auto py-8 flex">
             <!-- Sidebar for Filtering -->
             <div class="w-1/4 pr-8">
-                <h2 class="text-xl font-bold mb-4">Filters</h2>
-
-                <form @submit.prevent="applyFilters" class="space-y-4">
-                    <div>
-                        <Label for="name">Product Name</Label>
-                        <Input type="text" id="name" v-model="filterForm.name" placeholder="Search by name" class="mt-1" />
-                    </div>
-                    <div>
-                        <Label for="category">Category</Label>
-                        <Select v-model="filterForm.category">
-                            <SelectTrigger class="w-full mt-1">
-                                <SelectValue placeholder="Select a category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Categories</SelectItem>
-                                <SelectItem v-for="category in categories" :key="category.id" :value="category.id.toString()">{{ category.name }}</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div>
-                        <Label for="price_min">Min Price</Label>
-                        <Input type="number" id="price_min" v-model="filterForm.price_min" placeholder="Minimum price" class="mt-1" min="0" />
-                    </div>
-                    <div>
-                        <Label for="price_max">Max Price</Label>
-                        <Input type="number" id="price_max" v-model="filterForm.price_max" placeholder="Maximum price" class="mt-1" min="0" />
-                    </div>
-
-                    <h2 class="text-xl font-bold mb-4">Sort By</h2>
-                    <div class="space-y-4">
+                <div class="mb-8"> <!-- Wrapper for Filters -->
+                    <h2 class="text-xl font-bold mb-4">Filters</h2>
+                    <form @submit.prevent="applyFilters" class="space-y-4">
                         <div>
-                            <Label for="sort_by">Sort Field</Label>
-                            <Select v-model="filterForm.sort_by">
+                            <Label for="name">Product Name</Label>
+                            <Input type="text" id="name" v-model="filterForm.name" placeholder="Search by name" class="mt-1" />
+                        </div>
+                        <div>
+                            <Label for="category">Category</Label>
+                            <Select v-model="filterForm.category">
                                 <SelectTrigger class="w-full mt-1">
-                                    <SelectValue placeholder="Sort by" />
+                                    <SelectValue placeholder="Select a category" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="name">Name</SelectItem>
-                                    <SelectItem value="price">Price</SelectItem>
-                                    <SelectItem value="stock">Stock</SelectItem>
+                                    <SelectItem value="all">All Categories</SelectItem>
+                                    <SelectItem v-for="category in categories" :key="category.id" :value="category.id.toString()">{{ category.name }}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
                         <div>
-                            <Label for="sort_order">Sort Order</Label>
-                            <Select v-model="filterForm.sort_order">
-                                <SelectTrigger class="w-full mt-1">
-                                    <SelectValue placeholder="Sort order" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="asc">Ascending</SelectItem>
-                                    <SelectItem value="desc">Descending</SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <Label for="price_min">Min Price</Label>
+                            <Input type="number" id="price_min" v-model="filterForm.price_min" placeholder="Minimum price" class="mt-1" min="0" />
                         </div>
-                    </div>
+                        <div>
+                            <Label for="price_max">Max Price</Label>
+                            <Input type="number" id="price_max" v-model="filterForm.price_max" placeholder="Maximum price" class="mt-1" min="0" />
+                        </div>
 
-                    <div class="flex justify-end space-x-2">
-                        <Button type="button" variant="outline" @click="resetFilters">
-                            Reset
-                        </Button>
-                        <Button type="submit">
-                            Apply
-                        </Button>
-                    </div>
-                </form>
+                        <div class=""> <!-- Wrapper for Sort Options -->
+                            <h2 class="text-xl font-bold mb-4">Sort By</h2>
+                            <div class="space-y-4">
+                                <div>
+                                    <Label for="sort_by">Sort Field</Label>
+                                    <Select v-model="filterForm.sort_by">
+                                        <SelectTrigger class="w-full mt-1">
+                                            <SelectValue placeholder="Sort by" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="name">Name</SelectItem>
+                                            <SelectItem value="price">Price</SelectItem>
+                                            <SelectItem value="stock">Stock</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div>
+                                    <Label for="sort_order">Sort Order</Label>
+                                    <Select v-model="filterForm.sort_order">
+                                        <SelectTrigger class="w-full mt-1">
+                                            <SelectValue placeholder="Sort order" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="asc">Ascending</SelectItem>
+                                            <SelectItem value="desc">Descending</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-2">
+                            <Button type="button" variant="outline" @click="resetFilters">
+                                Reset
+                            </Button>
+                            <Button type="submit">
+                                Apply
+                            </Button>
+                        </div>
+                    </form>
+                </div>
+
+
             </div>
 
             <!-- Product Listing -->
             <div class="w-3/4">
                 <h1 class="text-2xl font-bold mb-6">Products</h1>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div v-for="product in products" :key="product.id" class="border p-4 rounded-lg shadow-sm">
+                    <div v-for="product in products.data" :key="product.id" class="border p-4 rounded-lg shadow-sm">
                         <img :src="product.image_url" :alt="product.name" class="w-full h-48 object-cover mb-4 rounded-md cursor-pointer" @click="openImageDialog(product.image_url)" />
                         <h2 class="text-xl font-semibold mb-2">{{ product.name }}</h2>
                         <p class="text-sm text-muted-foreground">{{ product.category.name }}</p>
@@ -194,6 +204,32 @@ const resetFilters = () => {
                         <p class="text-sm text-muted-foreground mb-4">Stock: {{ product.stock }}</p>
                         <Button @click="addToCart(product.id)">Add to Cart</Button>
                     </div>
+                </div>
+
+                <!-- Pagination -->
+                <div v-if="products.links.length > 3" class="flex justify-center mt-8 space-x-2">
+                    <template v-for="link in products.links">
+                        <Link
+                            v-if="link.url"
+                            :key="link.label"
+                            :href="link.url"
+                            :disabled="!link.url"
+                            :preserve-scroll="true"
+                            :replace="true"
+                        >
+                            <Button
+                                :variant="link.active ? 'default' : 'outline'"
+                                v-html="link.label"
+                            />
+                        </Link>
+                        <Button
+                            v-else
+                            :key="link.label"
+                            variant="outline"
+                            disabled
+                            v-html="link.label"
+                        />
+                    </template>
                 </div>
             </div>
         </div>

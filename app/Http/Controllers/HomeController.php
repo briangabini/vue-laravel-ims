@@ -43,7 +43,7 @@ class HomeController extends Controller
 
                 $products->orderBy($sortBy, $sortOrder);
 
-                $products = $products->get();
+                $products = $products->paginate(12); // Paginate products, 12 per page
                 $categories = Category::all();
 
                 \Log::info('HomeController: last_login_attempt in session', (array) session('flash.last_login_attempt'));
