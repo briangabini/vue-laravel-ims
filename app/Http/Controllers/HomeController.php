@@ -19,18 +19,22 @@ class HomeController extends Controller
             if ($user->role->name === 'admin' || $user->role->name === 'manager') {
                 return redirect()->route('admin.dashboard');
             } elseif ($user->role->name === 'customer') {
-                $products = Product::with('category');
+                $products = Product::query()->with('category');
 
-                if ($request->filled('search')) {
-                    $searchTerm = $request->search;
-                    $products->where(function ($query) use ($searchTerm) {
-                        $query->where('name', 'like', '%' . $searchTerm . '%')
-                            ->orWhere('description', 'like', '%' . $searchTerm . '%');
-                    });
+                if ($request->filled('category')) {
+                    $products->where('category_id', $request->input('category'));
                 }
 
-                if ($request->has('category_id') && $request->category_id !== '') {
-                    $products->where('category_id', (int)$request->category_id);
+                if ($request->filled('price_min')) {
+                    $products->where('price', '>=', $request->input('price_min'));
+                }
+
+                if ($request->filled('price_max')) {
+                    $products->where('price', '<=', $request->input('price_max'));
+                }
+
+                if ($request->filled('name')) {
+                    $products->where('name', 'like', '%' . $request->input('name') . '%');
                 }
 
                 $products = $products->get();
@@ -40,7 +44,7 @@ class HomeController extends Controller
                 return Inertia::render('customers/Home', [
                     'products' => $products,
                     'categories' => $categories,
-                    'filters' => $request->only(['search', 'category_id']),
+                    'filters' => $request->all(['category', 'price_min', 'price_max', 'name']),
                 ]);
             }
         }
