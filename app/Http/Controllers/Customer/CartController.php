@@ -131,8 +131,10 @@ class CartController extends Controller
             }
 
             // Create the order
+            $orderNumber = 'ORD-' . strtoupper(uniqid());
             $order = Order::create([
                 'user_id' => $user->id,
+                'order_number' => $orderNumber,
                 'status' => 'pending',
                 'total_price' => $totalPrice,
             ]);
