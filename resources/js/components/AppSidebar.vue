@@ -80,7 +80,7 @@ const mainNavItems = computed(() => {
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
                         <Link :href="route('home')">
-                            <AppLogo />
+                            <span class="font-bold text-lg">{{ $page.props.name }}</span>
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>

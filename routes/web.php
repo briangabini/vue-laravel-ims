@@ -48,7 +48,7 @@ Route::middleware(['auth', 'verified', 'role:customer'])->group(function() {
 
 // Authenticated user routes
 Route::middleware(['auth', 'verified'])->group(function() {
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('auth');
     // Customer viewing their own orders
     Route::get('/my-orders', [CustomerOrderController::class, 'index'])->name('my-orders.index');
     Route::get('/my-orders/{order}', [CustomerOrderController::class, 'show'])->name('my-orders.show');

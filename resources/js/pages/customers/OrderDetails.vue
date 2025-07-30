@@ -9,6 +9,8 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { type BreadcrumbItem } from '@/types';
+import { computed } from 'vue';
 
 interface Product {
     id: number;
@@ -41,10 +43,31 @@ defineProps<Props>();
 const formatTimestamp = (timestamp: string) => {
     return new Date(timestamp).toLocaleString();
 };
+
+const breadcrumbs = computed<BreadcrumbItem[]>(() => {
+    if (!props.order) {
+        return [
+            {
+                title: 'My Orders',
+                href: route('customers.orders'),
+            },
+        ];
+    }
+    return [
+        {
+            title: 'My Orders',
+            href: route('customers.orders'),
+        },
+        {
+            title: `Order #${props.order.order_number}`,
+            href: route('my-orders.show', props.order.order_number),
+        },
+    ];
+});
 </script>
 
 <template>
-    <AppLayout>
+    <AppLayout :breadcrumbs="breadcrumbs">
         <Head :title="order ? `Order #${order.order_number}` : 'Order Details'" />
 
         <div v-if="order" class="container mx-auto py-8">

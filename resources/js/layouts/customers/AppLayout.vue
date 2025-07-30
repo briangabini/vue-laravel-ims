@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Link, router } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import {
     Avatar,
     AvatarFallback,
@@ -19,6 +19,7 @@ import { type BreadcrumbItem } from '@/types';
 
 interface Props {
     breadcrumbs?: BreadcrumbItem[];
+    title?: string;
 }
 
 defineProps<Props>();
@@ -29,6 +30,7 @@ const logout = () => {
 </script>
 
 <template>
+    <Head :title="title ? `${title} - QuantumGrid` : 'QuantumGrid'" />
     <div>
         <nav class="bg-background border-b">
             <div class="mx-auto px-4 sm:px-6 lg:px-8">

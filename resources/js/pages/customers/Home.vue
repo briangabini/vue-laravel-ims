@@ -93,7 +93,7 @@ const addToCart = (productId: number) => {
 </script>
 
 <template>
-    <AppLayout>
+    <AppLayout title="Home">
         <div class="container mx-auto py-8 flex">
             <!-- Sidebar for Filtering -->
             <div class="w-1/4 pr-8">

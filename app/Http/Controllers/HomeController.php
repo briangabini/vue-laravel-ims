@@ -6,40 +6,46 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Response;
+
 
 class HomeController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request): Response|RedirectResponse
     {
-        if (auth()->user()->role->name === 'admin' || auth()->user()->role->name === 'manager') {
-            return Inertia::render('admin/Home');
-        } else if (auth()->user()->role->name === 'customer') {
-            $products = Product::with('category');
+        if (auth()->check()) {
+            $user = auth()->user();
+            if ($user->role->name === 'admin' || $user->role->name === 'manager') {
+                return redirect()->route('admin.dashboard');
+            } elseif ($user->role->name === 'customer') {
+                $products = Product::with('category');
 
-            if ($request->filled('search')) {
-                $searchTerm = $request->search;
-                $products->where(function ($query) use ($searchTerm) {
-                    $query->where('name', 'like', '%' . $searchTerm . '%')
-                          ->orWhere('description', 'like', '%' . $searchTerm . '%');
-                });
+                if ($request->filled('search')) {
+                    $searchTerm = $request->search;
+                    $products->where(function ($query) use ($searchTerm) {
+                        $query->where('name', 'like', '%' . $searchTerm . '%')
+                            ->orWhere('description', 'like', '%' . $searchTerm . '%');
+                    });
+                }
+
+                if ($request->has('category_id') && $request->category_id !== '') {
+                    $products->where('category_id', (int)$request->category_id);
+                }
+
+                $products = $products->get();
+                $categories = Category::all();
+
+                \Log::info('HomeController: last_login_attempt in session', (array) session('flash.last_login_attempt'));
+                return Inertia::render('customers/Home', [
+                    'products' => $products,
+                    'categories' => $categories,
+                    'filters' => $request->only(['search', 'category_id']),
+                ]);
             }
-
-            if ($request->has('category_id') && $request->category_id !== '') {
-                $products->where('category_id', (int)$request->category_id);
-            }
-
-            $products = $products->get();
-            $categories = Category::all();
-
-            \Log::info('HomeController: last_login_attempt in session', (array) session('flash.last_login_attempt'));
-            return Inertia::render('customers/Home', [
-                'products' => $products,
-                'categories' => $categories,
-                'filters' => $request->only(['search', 'category_id']),
-            ]);
         }
-        // Fallback for any other roles or if role is not set
+        // Fallback for guests or any other roles
         return Inertia::render('Welcome');
     }
 }
+
