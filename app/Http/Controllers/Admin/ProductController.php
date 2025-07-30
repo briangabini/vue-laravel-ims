@@ -21,7 +21,7 @@ class ProductController extends Controller
     public function index(): Response
     {
         return Inertia::render('admin/Products/Index', [
-            'products' => Product::with('category')->latest()->paginate(10),
+            'products' => Product::with('category')->orderBy('id')->paginate(10),
         ]);
     }
 
@@ -79,6 +79,9 @@ class ProductController extends Controller
 
     public function destroy(Product $product): \Illuminate\Http\RedirectResponse
     {
+        if ($product->image) {
+            Storage::disk('public')->delete($product->image);
+        }
         $product->delete();
 
         return redirect()->route('admin.products.index');

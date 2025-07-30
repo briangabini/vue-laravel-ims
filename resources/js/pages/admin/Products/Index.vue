@@ -3,6 +3,12 @@ import AppLayout from '@/layouts/admin/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, usePage, router } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+} from '@/components/ui/pagination';
 
 interface Product {
     id: number;
@@ -11,9 +17,20 @@ interface Product {
     price: number;
     quantity: number;
     category: { name: string };
+    image?: string; // Add image property
 }
 
-defineProps<{ products: { data: Product[] } }>();
+interface ProductsPagination {
+    data: Product[];
+    links: { url: string | null; label: string; active: boolean }[];
+    current_page: number;
+    last_page: number;
+    from: number;
+    to: number;
+    total: number;
+}
+
+defineProps<{ products: ProductsPagination }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -55,6 +72,7 @@ const deleteProduct = (id: number) => {
                                     <th class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-left text-sm font-semibold text-gray-600 dark:text-gray-300">Category</th>
                                     <th class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-left text-sm font-semibold text-gray-600 dark:text-gray-300">Price</th>
                                     <th class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-left text-sm font-semibold text-gray-600 dark:text-gray-300">Quantity</th>
+                                    <th class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-left text-sm font-semibold text-gray-600 dark:text-gray-300">Image</th>
                                     <th class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-left text-sm font-semibold text-gray-600 dark:text-gray-300">Actions</th>
                                 </tr>
                             </thead>
@@ -65,6 +83,10 @@ const deleteProduct = (id: number) => {
                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">{{ product.category.name }}</td>
                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">${{ product.price.toFixed(2) }}</td>
                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">{{ product.quantity }}</td>
+                                    <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100 text-center">
+                                        <img v-if="product.image" :src="`/storage/${product.image}`" alt="Product Image" class="w-16 h-16 object-cover rounded-md mx-auto" />
+                                        <span v-else class="text-xs text-gray-500">No Image</span>
+                                    </td>
                                     <td class="py-2 px-4 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-gray-100">
                                         <Link :href="route('admin.products.edit', product.id)" class="text-indigo-600 hover:text-indigo-900 mr-2">Edit</Link>
                                         <button v-if="canDeleteProduct" @click="deleteProduct(product.id)" class="text-red-600 hover:text-red-900">Delete</button>
@@ -72,6 +94,27 @@ const deleteProduct = (id: number) => {
                                 </tr>
                             </tbody>
                         </table>
+                        <Pagination v-if="products.links.length > 3" class="mt-4">
+                            <PaginationContent>
+                                <PaginationPrevious :to="products.prev_page_url" />
+                                <template v-for="(link, index) in products.links.slice(1, -1)" :key="`page-link-${index}`">
+                                    <PaginationItem v-if="+link.label > 0">
+                                        <Link
+                                            :href="link.url || '#'"
+                                            class="px-3 py-1 text-sm rounded-md"
+                                            :class="{
+                                                'bg-indigo-500 text-white': link.active,
+                                                'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600': !link.active,
+                                                'pointer-events-none opacity-50': !link.url,
+                                            }"
+                                            v-html="link.label"
+                                        />
+                                    </PaginationItem>
+                                    <PaginationEllipsis v-else-if="link.label === '...'" :key="`ellipsis-${index}`" />
+                                </template>
+                                <PaginationNext :to="products.next_page_url" />
+                            </PaginationContent>
+                        </Pagination>
                     </div>
                     <div v-else class="text-center text-gray-500 dark:text-gray-400">
                         No products found.

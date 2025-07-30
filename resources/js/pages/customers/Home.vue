@@ -124,6 +124,10 @@ const addToCart = (productId: number) => {
                 <h1 class="text-2xl font-bold mb-6">Products</h1>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div v-for="product in products" :key="product.id" class="border p-4 rounded-lg shadow-sm">
+                        <img v-if="product.image" :src="`/storage/${product.image}`" alt="Product Image" class="w-full h-48 object-cover mb-4 rounded-md" />
+                        <div v-else class="w-full h-48 bg-gray-200 flex items-center justify-center mb-4 rounded-md text-gray-500">
+                            No Image
+                        </div>
                         <h2 class="text-xl font-semibold mb-2">{{ product.name }}</h2>
                         <p class="text-sm text-muted-foreground">{{ product.category.name }}</p>
                         <p class="text-muted-foreground mb-4">{{ product.description }}</p>

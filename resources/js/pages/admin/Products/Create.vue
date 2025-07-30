@@ -76,6 +76,12 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <div v-if="form.errors.category_id" class="text-red-500 text-sm mt-1">{{ form.errors.category_id }}</div>
                         </div>
 
+                        <div class="mb-4">
+                            <label for="image" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Product Image</label>
+                            <input type="file" id="image" @change="handleImageChange" class="mt-1 block w-full text-gray-700 dark:text-gray-200" accept="image/*" />
+                            <div v-if="form.errors.image" class="text-red-500 text-sm mt-1">{{ form.errors.image }}</div>
+                        </div>
+
                         <button type="submit" :disabled="form.processing" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-md">
                             Create Product
                         </button>
