@@ -17,7 +17,7 @@ defineProps<{ title?: string }>();
                 <NavMain />
             </template>
         </AppHeader>
-        <main class="flex-grow container mx-auto p-4">
+        <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <slot />
         </main>
         <NavFooter />
