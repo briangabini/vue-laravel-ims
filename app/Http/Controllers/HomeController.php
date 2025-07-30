@@ -37,6 +37,12 @@ class HomeController extends Controller
                     $products->where('name', 'like', '%' . $request->input('name') . '%');
                 }
 
+                // Sorting
+                $sortBy = $request->input('sort_by', 'name'); // Default sort by name
+                $sortOrder = $request->input('sort_order', 'asc'); // Default sort order ascending
+
+                $products->orderBy($sortBy, $sortOrder);
+
                 $products = $products->get();
                 $categories = Category::all();
 
@@ -44,7 +50,7 @@ class HomeController extends Controller
                 return Inertia::render('customers/Home', [
                     'products' => $products,
                     'categories' => $categories,
-                    'filters' => $request->all(['category', 'price_min', 'price_max', 'name']),
+                    'filters' => $request->all(['category', 'price_min', 'price_max', 'name', 'sort_by', 'sort_order']),
                 ]);
             }
         }

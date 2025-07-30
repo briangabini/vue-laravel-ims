@@ -38,6 +38,8 @@ interface Props {
         price_min?: number;
         price_max?: number;
         name?: string;
+        sort_by?: string;
+        sort_order?: string;
     };
 }
 
@@ -60,6 +62,8 @@ const filterForm = reactive({
     price_min: props.filters.price_min || null,
     price_max: props.filters.price_max || null,
     name: props.filters.name || '',
+    sort_by: props.filters.sort_by || 'name',
+    sort_order: props.filters.sort_order || 'asc',
 });
 
 const applyFilters = () => {
@@ -98,6 +102,8 @@ const resetFilters = () => {
     filterForm.price_min = null;
     filterForm.price_max = null;
     filterForm.name = '';
+    filterForm.sort_by = 'name';
+    filterForm.sort_order = 'asc';
     applyFilters();
 };
 </script>
@@ -134,12 +140,42 @@ const resetFilters = () => {
                         <Label for="price_max">Max Price</Label>
                         <Input type="number" id="price_max" v-model="filterForm.price_max" placeholder="Maximum price" class="mt-1" min="0" />
                     </div>
+
+                    <h2 class="text-xl font-bold mb-4">Sort By</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <Label for="sort_by">Sort Field</Label>
+                            <Select v-model="filterForm.sort_by">
+                                <SelectTrigger class="w-full mt-1">
+                                    <SelectValue placeholder="Sort by" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="name">Name</SelectItem>
+                                    <SelectItem value="price">Price</SelectItem>
+                                    <SelectItem value="stock">Stock</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div>
+                            <Label for="sort_order">Sort Order</Label>
+                            <Select v-model="filterForm.sort_order">
+                                <SelectTrigger class="w-full mt-1">
+                                    <SelectValue placeholder="Sort order" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="asc">Ascending</SelectItem>
+                                    <SelectItem value="desc">Descending</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+
                     <div class="flex justify-end space-x-2">
                         <Button type="button" variant="outline" @click="resetFilters">
-                            Reset Filters
+                            Reset
                         </Button>
                         <Button type="submit">
-                            Apply Filters
+                            Apply
                         </Button>
                     </div>
                 </form>
