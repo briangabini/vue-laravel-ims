@@ -56,7 +56,7 @@ const lastLoginAttempt = computed(() => page.props.flash?.last_login_attempt);
 onMounted(() => {
     if (lastLoginAttempt.value) {
         toast.success(
-            `Your last login attempt was on ${lastLoginAttempt.value.logged_in_at} from ${lastLoginAttempt.value.ip_address}. It was ${lastLoginAttempt.value.successful ? 'successful' : 'unsuccessful'}.`,
+            `Your last login attempt was on ${lastLoginAttempt.value.logged_in_at} from ${lastLoginAttempt.value.ip_in_address}. It was ${lastLoginAttempt.value.successful ? 'successful' : 'unsuccessful'}.`,
             { duration: 5000 }
         );
     }
@@ -111,12 +111,24 @@ const resetFilters = () => {
     filterForm.sort_order = 'asc';
     applyFilters();
 };
+
+const addToCart = (productId: number) => {
+    router.post(route('customers.cart.store'), { product_id: productId }, {
+        onSuccess: () => {
+            toast.success('Product added to cart successfully!');
+        },
+        onError: (errors) => {
+            toast.error('Error adding product to cart.');
+            console.error('Error adding to cart:', errors);
+        },
+    });
+};
 </script>
 
 <template>
     <AppLayout title="Home">
         <div class="container mx-auto py-8 flex">
-            <!-- Sidebar for Filtering -->
+            <!-- Sidebar for Filtering and Sorting -->
             <div class="w-1/4 pr-8">
                 <div class="mb-8"> <!-- Wrapper for Filters -->
                     <h2 class="text-xl font-bold mb-4">Filters</h2>
@@ -176,7 +188,6 @@ const resetFilters = () => {
                                 </div>
                             </div>
                         </div>
-
                         <div class="flex justify-end space-x-2">
                             <Button type="button" variant="outline" @click="resetFilters">
                                 Reset
@@ -187,22 +198,20 @@ const resetFilters = () => {
                         </div>
                     </form>
                 </div>
-
-
             </div>
 
             <!-- Product Listing -->
             <div class="w-3/4">
                 <h1 class="text-2xl font-bold mb-6">Products</h1>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div v-for="product in products.data" :key="product.id" class="border p-4 rounded-lg shadow-sm">
+                    <div v-for="product in products.data" :key="product.id" class="border p-4 rounded-lg shadow-sm flex flex-col">
                         <img :src="product.image_url" :alt="product.name" class="w-full h-48 object-cover mb-4 rounded-md cursor-pointer" @click="openImageDialog(product.image_url)" />
                         <h2 class="text-xl font-semibold mb-2">{{ product.name }}</h2>
                         <p class="text-sm text-muted-foreground">{{ product.category.name }}</p>
-                        <p class="text-muted-foreground mb-4">{{ product.description }}</p>
+                        <p class="text-muted-foreground mb-4 flex-grow">{{ product.description }}</p>
                         <p class="text-lg font-bold mb-4">${{ product.price.toFixed(2) }}</p>
                         <p class="text-sm text-muted-foreground mb-4">Stock: {{ product.stock }}</p>
-                        <Button @click="addToCart(product.id)">Add to Cart</Button>
+                        <Button @click="addToCart(product.id)" class="mt-auto">Add to Cart</Button>
                     </div>
                 </div>
 

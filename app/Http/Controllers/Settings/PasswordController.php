@@ -34,14 +34,22 @@ class PasswordController extends Controller
         $user = $request->user();
         $user->load('passwordHistories');
 
+        // Enforce password aging (2.1.11)
+        if ($user->password_change_at && $user->password_change_at->diffInHours(now()) < 24) {
+            throw ValidationException::withMessages([
+                'password' => __('You can only change your password once every 24 hours.'),
+            ]);
+        }
+
         $validated = $request->validate([
             'current_password' => ['required', 'current_password'],
             'password' => ['required', Password::defaults(), 'confirmed', new NotInPasswordHistory($user)],
         ]);
 
-        $user->update([
+        $user->forceFill([
             'password' => Hash::make($validated['password']),
-        ]);
+            'password_change_at' => now(),
+        ])->save();
 
         PasswordHistory::create([
             'user_id' => $user->id,
