@@ -39,7 +39,7 @@ class NewPasswordController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
-            'password' => ['required', 'confirmed', Rules\Password::defaults(), new NotInPasswordHistory($request->user())],
+            'password' => ['required', 'confirmed', Rules\Password::defaults(), new NotInPasswordHistory(\App\Models\User::where('email', $request->email)->first())],
         ]);
 
         // Here we will attempt to reset the user's password. If it is successful we

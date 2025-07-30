@@ -2,6 +2,17 @@
 import AppLayout from '@/layouts/admin/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/vue3';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 
 interface Category {
     id: number;
@@ -16,7 +27,15 @@ const form = useForm({
     price: 0,
     quantity: 0,
     category_id: '',
+    image: null as File | null,
 });
+
+const handleImageChange = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files[0]) {
+        form.image = target.files[0];
+    }
+};
 
 const submit = () => {
     form.post(route('admin.products.store'));
@@ -44,47 +63,52 @@ const breadcrumbs: BreadcrumbItem[] = [
                     <h1 class="text-2xl font-bold mb-4">Create New Product</h1>
                     <form @submit.prevent="submit" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
                         <div class="mb-4">
-                            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Product Name</label>
-                            <input type="text" id="name" v-model="form.name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" />
+                            <Label for="name">Product Name</Label>
+                            <Input type="text" id="name" v-model="form.name" />
                             <div v-if="form.errors.name" class="text-red-500 text-sm mt-1">{{ form.errors.name }}</div>
                         </div>
 
                         <div class="mb-4">
-                            <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-                            <textarea id="description" v-model="form.description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"></textarea>
+                            <Label for="description">Description</Label>
+                            <Textarea id="description" v-model="form.description" rows="3" />
                             <div v-if="form.errors.description" class="text-red-500 text-sm mt-1">{{ form.errors.description }}</div>
                         </div>
 
                         <div class="mb-4">
-                            <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Price</label>
-                            <input type="number" id="price" v-model.number="form.price" step="0.01" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" />
+                            <Label for="price">Price</Label>
+                            <Input type="number" id="price" v-model.number="form.price" step="0.01" min="0" />
                             <div v-if="form.errors.price" class="text-red-500 text-sm mt-1">{{ form.errors.price }}</div>
                         </div>
 
                         <div class="mb-4">
-                            <label for="quantity" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Quantity</label>
-                            <input type="number" id="quantity" v-model.number="form.quantity" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" />
+                            <Label for="quantity">Quantity</Label>
+                            <Input type="number" id="quantity" v-model.number="form.quantity" min="0" />
                             <div v-if="form.errors.quantity" class="text-red-500 text-sm mt-1">{{ form.errors.quantity }}</div>
                         </div>
 
                         <div class="mb-4">
-                            <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
-                            <select id="category" v-model="form.category_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
-                                <option value="" disabled>Select a category</option>
-                                <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option>
-                            </select>
+                            <Label for="category">Category</Label>
+                            <Select v-model="form.category_id">
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select a category" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="" disabled>Select a category</SelectItem>
+                                    <SelectItem v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</SelectItem>
+                                </SelectContent>
+                            </Select>
                             <div v-if="form.errors.category_id" class="text-red-500 text-sm mt-1">{{ form.errors.category_id }}</div>
                         </div>
 
                         <div class="mb-4">
-                            <label for="image" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Product Image</label>
-                            <input type="file" id="image" @change="handleImageChange" class="mt-1 block w-full text-gray-700 dark:text-gray-200" accept="image/*" />
+                            <Label for="image">Product Image</Label>
+                            <Input type="file" id="image" @change="handleImageChange" accept="image/*" />
                             <div v-if="form.errors.image" class="text-red-500 text-sm mt-1">{{ form.errors.image }}</div>
                         </div>
 
-                        <button type="submit" :disabled="form.processing" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-md">
+                        <Button type="submit" :disabled="form.processing">
                             Create Product
-                        </button>
+                        </Button>
                     </form>
                 </div>
             </div>

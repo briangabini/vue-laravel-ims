@@ -2,6 +2,10 @@
 import AppLayout from '@/layouts/admin/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/vue3';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 
 interface Category {
     id: number;
@@ -42,20 +46,20 @@ const breadcrumbs: BreadcrumbItem[] = [
                     <h1 class="text-2xl font-bold mb-4">Edit Category: {{ category.name }}</h1>
                     <form @submit.prevent="submit" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
                         <div class="mb-4">
-                            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category Name</label>
-                            <input type="text" id="name" v-model="form.name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" />
+                            <Label for="name">Category Name</Label>
+                            <Input type="text" id="name" v-model="form.name" />
                             <div v-if="form.errors.name" class="text-red-500 text-sm mt-1">{{ form.errors.name }}</div>
                         </div>
 
                         <div class="mb-4">
-                            <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-                            <textarea id="description" v-model="form.description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"></textarea>
+                            <Label for="description">Description</Label>
+                            <Textarea id="description" v-model="form.description" rows="3" />
                             <div v-if="form.errors.description" class="text-red-500 text-sm mt-1">{{ form.errors.description }}</div>
                         </div>
 
-                        <button type="submit" :disabled="form.processing" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-md">
+                        <Button type="submit" :disabled="form.processing">
                             Update Category
-                        </button>
+                        </Button>
                     </form>
                 </div>
             </div>
