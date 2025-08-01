@@ -2,6 +2,15 @@
 import AppLayout from '@/layouts/admin/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/vue3';
+import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 
 interface Order {
     id: number;
@@ -19,7 +28,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.put(route('admin.orders.update', props.order.id));
+    form.put(route('admin.orders.update', props.order.order_number));
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -29,7 +38,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
     {
         title: `Order #${props.order.order_number}`,
-        href: '#',
+        href: route('admin.orders.show', props.order.order_number),
     },
     {
         title: 'Edit Status',
@@ -48,20 +57,25 @@ const breadcrumbs: BreadcrumbItem[] = [
                     <h1 class="text-2xl font-bold mb-4">Edit Order Status: #{{ order.order_number }}</h1>
                     <form @submit.prevent="submit" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
                         <div class="mb-4">
-                            <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Order Status</label>
-                            <select id="status" v-model="form.status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
-                                <option value="pending">Pending</option>
-                                <option value="processing">Processing</option>
-                                <option value="shipped">Shipped</option>
-                                <option value="delivered">Delivered</option>
-                                <option value="cancelled">Cancelled</option>
-                            </select>
+                            <Label for="status">Order Status</Label>
+                            <Select v-model="form.status">
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="pending">Pending</SelectItem>
+                                    <SelectItem value="processing">Processing</SelectItem>
+                                    <SelectItem value="shipped">Shipped</SelectItem>
+                                    <SelectItem value="delivered">Delivered</SelectItem>
+                                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                                </SelectContent>
+                            </Select>
                             <div v-if="form.errors.status" class="text-red-500 text-sm mt-1">{{ form.errors.status }}</div>
                         </div>
 
-                        <button type="submit" :disabled="form.processing" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-md">
+                        <Button type="submit" :disabled="form.processing">
                             Update Status
-                        </button>
+                        </Button>
                     </form>
                 </div>
             </div>

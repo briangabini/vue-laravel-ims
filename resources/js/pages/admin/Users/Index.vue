@@ -29,8 +29,8 @@ const deleteUser = (id: number) => {
 <template>
     <Head title="Manage Users" />
 
-    <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+    <AppLayout :breadcrumbs="breadcrumbs" :key="'admin-users-layout'">
+        <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4" :key="'user-index-page'">
             <div class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-border">
                 <div class="p-4">
                     <h1 class="text-2xl font-bold mb-4">Manage Users</h1>

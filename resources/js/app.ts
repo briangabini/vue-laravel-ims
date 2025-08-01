@@ -25,6 +25,11 @@ createInertiaApp({
     progress: {
         color: '#4B5563',
     },
+    // Force full page reload on every visit for debugging parentNode errors
+    // Remove this once the issue is resolved.
+    shouldResolve: (name) => {
+        return false;
+    },
 });
 
 // This will set light / dark mode on page load...

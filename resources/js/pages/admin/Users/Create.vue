@@ -84,7 +84,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                     <SelectValue placeholder="Select a role" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="" disabled>Select a role</SelectItem>
+                                    <SelectItem value="placeholder" disabled>Select a role</SelectItem>
                                     <SelectItem v-for="role in roles" :key="role.id" :value="role.id">{{ role.name }}</SelectItem>
                                 </SelectContent>
                             </Select>
