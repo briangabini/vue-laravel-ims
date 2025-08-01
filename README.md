@@ -2,6 +2,15 @@
 
 This is an inventory management system built with Vue.js and Laravel for the course Security Development.
 
+## Technologies Used
+
+*   **Backend:** Laravel 12
+*   **Frontend:** Vue 3, Vite
+*   **Styling:** Tailwind CSS, ShadCN
+*   **Authentication:** Laravel Fortify (under the hood)
+*   **Database:** SQLite (default), MySQL, PostgreSQL
+
+
 ## Access Control Matrix
 
 | Privilege / Action | Website Administrator | Product Manager | Customer |
