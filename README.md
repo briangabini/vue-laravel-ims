@@ -159,6 +159,8 @@ This is an inventory management system built with Vue.js and Laravel for the cou
   - [Account Deletion Confirmation](demo_images/customers/settings/settings-account-deletion-confirmation.png)
 
 ### Universal
+- Errors
+  - [404 Not Found](demo_images/universal/errors/error-404.png)
 - Forgot Password
   - [Email](demo_images/universal/forgot-password/forgot-password-email.png)
   - [Security Question](demo_images/universal/forgot-password/forgot-password-security-question.png)
