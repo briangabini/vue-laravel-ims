@@ -7,6 +7,7 @@ use App\Models\PasswordHistory;
 use App\Models\SecurityQuestion;
 use App\Models\User;
 use App\Models\UserSecurityAnswer;
+use App\Rules\NotContainUserData;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -39,7 +40,17 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => [
+                'required',
+                'confirmed',
+                Rules\Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols(2)
+                    ->uncompromised(),
+                new NotContainUserData(['name' => $request->name, 'email' => $request->email])
+            ],
             'security_questions' => 'required|array|min:1',
             'security_questions.*.security_question_id' => 'required|exists:security_questions,id',
             'security_questions.*.answer' => 'required|string|max:255',

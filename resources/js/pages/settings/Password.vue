@@ -2,8 +2,8 @@
 import InputError from '@/components/InputError.vue';
 import AppLayout from '@/layouts/admin/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,8 @@ const breadcrumbItems: BreadcrumbItem[] = [
     },
 ];
 
+const props = defineProps<{ user: { name: string; email: string } }>();
+
 const passwordInput = ref<HTMLInputElement | null>(null);
 const currentPasswordInput = ref<HTMLInputElement | null>(null);
 
@@ -25,6 +27,18 @@ const form = useForm({
     current_password: '',
     password: '',
     password_confirmation: '',
+});
+
+const passwordError = computed(() => {
+    const password = form.password.toLowerCase();
+    const name = props.user.name.toLowerCase();
+    const email = props.user.email.toLowerCase().split('@')[0];
+
+    if (password && (password.includes(name) || password.includes(email))) {
+        return 'Password must not contain your name or email.';
+    }
+
+    return '';
 });
 
 const updatePassword = () => {
@@ -84,7 +98,7 @@ const updatePassword = () => {
                             autocomplete="new-password"
                             placeholder="New password"
                         />
-                        <InputError :message="form.errors.password" />
+                        <InputError :message="form.errors.password || passwordError" />
                     </div>
 
                     <div class="grid gap-2">

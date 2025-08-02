@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Models\PasswordHistory;
+use App\Rules\NotContainUserData;
 use App\Rules\NotInPasswordHistory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,13 +18,24 @@ class PasswordController extends Controller
     /**
      * Show the user's password settings page.
      */
-    public function edit(): Response
+    public function edit(Request $request): Response
     {
-        if (auth()->user()->role->name === 'customer') {
-            return Inertia::render('customers/Password');
+        $user = $request->user();
+        if ($user->role->name === 'customer') {
+            return Inertia::render('customers/Password', [
+                'user' => [
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ],
+            ]);
         }
 
-        return Inertia::render('settings/Password');
+        return Inertia::render('settings/Password', [
+            'user' => [
+                'name' => $user->name,
+                'email' => $user->email,
+            ],
+        ]);
     }
 
     /**
@@ -43,7 +55,18 @@ class PasswordController extends Controller
 
         $validated = $request->validate([
             'current_password' => ['required', 'current_password'],
-            'password' => ['required', Password::defaults(), 'confirmed', new NotInPasswordHistory($user)],
+            'password' => [
+                'required',
+                'confirmed',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols(2)
+                    ->uncompromised(),
+                new NotInPasswordHistory($user),
+                new NotContainUserData(['name' => $user->name, 'email' => $user->email])
+            ],
         ]);
 
         $user->forceFill([

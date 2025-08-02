@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthBase from '@/layouts/AuthLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
 import { LoaderCircle, PlusCircle, Trash2 } from 'lucide-vue-next';
 import {
     Select,
@@ -35,10 +36,51 @@ const removeQuestion = (index: number) => {
     form.security_questions.splice(index, 1);
 };
 
+const passwordError = ref('');
+
+const validatePassword = () => {
+    const password = form.password;
+    const name = form.name.toLowerCase();
+    const email = form.email.toLowerCase().split('@')[0];
+    const errors = [];
+
+    if (password.length < 8) {
+        errors.push('be at least 8 characters');
+    }
+    if (!/[a-z]/.test(password)) {
+        errors.push('contain at least one lowercase letter');
+    }
+    if (!/[A-Z]/.test(password)) {
+        errors.push('contain at least one uppercase letter');
+    }
+    if (!/\d/.test(password)) {
+        errors.push('contain at least one number');
+    }
+    if ((password.match(/[!@#$%^&*(),.?":{}|<>]/g) || []).length < 2) {
+        errors.push('contain at least two symbols');
+    }
+    if (name && password.toLowerCase().includes(name) && name.length > 0) {
+        errors.push('not contain your name');
+    }
+    if (email && password.toLowerCase().includes(email) && email.length > 0) {
+        errors.push('not contain your email');
+    }
+
+    if (errors.length > 0) {
+        passwordError.value = 'Password must ' + errors.join(', ') + '.';
+        return false;
+    }
+
+    passwordError.value = '';
+    return true;
+};
+
 const submit = () => {
-    form.post(route('register'), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
-    });
+    if (validatePassword()) {
+        form.post(route('register'), {
+            onFinish: () => form.reset('password', 'password_confirmation'),
+        });
+    }
 };
 </script>
 
@@ -69,9 +111,10 @@ const submit = () => {
                         :tabindex="3"
                         autocomplete="new-password"
                         v-model="form.password"
+                        @blur="validatePassword"
                         placeholder="Password"
                     />
-                    <InputError :message="form.errors.password" />
+                    <InputError :message="form.errors.password || passwordError" />
                 </div>
 
                 <div class="grid gap-2">
