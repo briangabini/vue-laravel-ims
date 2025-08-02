@@ -10,6 +10,14 @@ This is an inventory management system built with Vue.js and Laravel for the cou
 *   **Authentication:** Laravel Fortify (under the hood)
 *   **Database:** SQLite (default), MySQL, PostgreSQL
 
+## Screenshots
+
+### Admin Dashboard
+![Admin Dashboard](demo_images/admin/dashboard.png)
+
+### Customer Home Page
+![Customer Home Page](demo_images/customers/home/home-page.png)
+
 
 ## Access Control Matrix
 
