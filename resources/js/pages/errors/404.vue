@@ -15,8 +15,8 @@ import { Button } from '@/components/ui/button';
             </CardHeader>
             <CardContent class="text-center">
                 <p class="text-gray-600 dark:text-gray-400 mt-2">The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.</p>
-                <Button as-child class="mt-6">
-                    <Link :href="route('welcome')">
+                <Button class="mt-6">
+                    <Link :href="route('customers.home')">
                         Return Home
                     </Link>
                 </Button>
