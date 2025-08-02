@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
+use Illuminate\Validation\ValidationException;
 use Inertia\Response;
 
 class PasswordController extends Controller
