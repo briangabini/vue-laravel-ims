@@ -88,13 +88,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 
                         <div class="mb-4">
                             <Label for="price">Price</Label>
-                            <Input type="number" id="price" v-model.number="form.price" step="0.01" min="0" />
+                            <Input type="number" id="price" v-model.number="form.price" step="0.01" min="0" max="999999.99" />
                             <div v-if="form.errors.price" class="text-red-500 text-sm mt-1">{{ form.errors.price }}</div>
                         </div>
 
                         <div class="mb-4">
                             <Label for="quantity">Quantity</Label>
-                            <Input type="number" id="quantity" v-model.number="form.quantity" min="0" />
+                            <Input type="number" id="quantity" v-model.number="form.quantity" min="0" max="999999" />
                             <div v-if="form.errors.quantity" class="text-red-500 text-sm mt-1">{{ form.errors.quantity }}</div>
                         </div>
 

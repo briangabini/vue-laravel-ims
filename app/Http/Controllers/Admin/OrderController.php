@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreOrderRequest;
+use App\Http\Requests\UpdateOrderRequest;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -24,6 +25,25 @@ class OrderController extends Controller
         ]);
     }
 
+    public function create(): Response
+    {
+        return Inertia::render('admin/Orders/Create', [
+            'users' => \App\Models\User::all(),
+            'products' => \App\Models\Product::all(),
+        ]);
+    }
+
+    public function store(StoreOrderRequest $request): \Illuminate\Http\RedirectResponse
+    {
+        $order = Order::create($request->validated());
+
+        foreach ($request->validated('order_items') as $item) {
+            $order->orderItems()->create($item);
+        }
+
+        return redirect()->route('admin.orders.index');
+    }
+
     public function show(Order $order): Response
     {
         return Inertia::render('admin/Orders/Show', [
@@ -35,16 +55,21 @@ class OrderController extends Controller
     {
         return Inertia::render('admin/Orders/Edit', [
             'order' => $order,
+            'users' => \App\Models\User::all(),
+            'products' => \App\Models\Product::all(),
         ]);
     }
 
-    public function update(Request $request, Order $order): \Illuminate\Http\RedirectResponse
+    public function update(UpdateOrderRequest $request, Order $order): \Illuminate\Http\RedirectResponse
     {
-        $request->validate([
-            'status' => 'required|string|in:pending,processing,shipped,delivered,cancelled',
-        ]);
+        $order->update($request->validated());
 
-        $order->update($request->only('status'));
+        if ($request->has('order_items')) {
+            $order->orderItems()->delete();
+            foreach ($request->validated('order_items') as $item) {
+                $order->orderItems()->create($item);
+            }
+        }
 
         return redirect()->route('admin.orders.index');
     }

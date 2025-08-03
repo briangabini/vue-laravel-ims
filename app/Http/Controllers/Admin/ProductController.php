@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -32,17 +33,9 @@ class ProductController extends Controller
         ]);
     }
 
-    public function store(Request $request): \Illuminate\Http\RedirectResponse
+    public function store(StoreProductRequest $request): \Illuminate\Http\RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'quantity' => 'required|integer|min:0',
-            'category_id' => 'required|exists:categories,id',
-        ]);
-
-        Product::create($request->all());
+        Product::create($request->validated());
 
         return redirect()->route('admin.products.index');
     }
@@ -62,17 +55,9 @@ class ProductController extends Controller
         ]);
     }
 
-    public function update(Request $request, Product $product): \Illuminate\Http\RedirectResponse
+    public function update(UpdateProductRequest $request, Product $product): \Illuminate\Http\RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'quantity' => 'required|integer|min:0',
-            'category_id' => 'required|exists:categories,id',
-        ]);
-
-        $product->update($request->all());
+        $product->update($request->validated());
 
         return redirect()->route('admin.products.index');
     }
